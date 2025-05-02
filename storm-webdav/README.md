@@ -142,6 +142,8 @@ Create a test file
 echo "Test text" > testfile
 ```
 
+#### VOMS role
+
 Use the the proxy with `/dev/Role=webdav` role obtained by a `dev` VO
 
 ```bash
@@ -156,6 +158,8 @@ Copying file:///home/test/testfile   [DONE]  after 0s
 $ gfal-cat https://storm.test.example:8443/fga/testfile
 Test text
 ```
+
+#### VOMS proxy
 
 Now use the generic proxy signed by a `dev` VO
 
@@ -184,7 +188,9 @@ Now destroy the VOMS proxy
 voms-proxy-destroy
 ```
 
-and use a generic token issued by [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) instead. In this tutorial, an `oidc-agent` client configuration mounted in the client container is used, but you should create a new one since the CLIENT_ID/SECRET MUST NOT be shared among users!
+#### JWT with default groups
+
+Use a generic token issued by [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) instead. In this tutorial, an `oidc-agent` client configuration mounted in the client container is used, but you should create a new one since the CLIENT_ID/SECRET MUST NOT be shared among users!
 
 Set the following variable and add the client configuration to the `oidc-agent` service with
 
@@ -215,6 +221,8 @@ $ gfal-rm https://storm.test.example:8443/fga/testfile
 https://storm.test.example:8443/fga/testfile    FAILED
 gfal-rm error: 1 (Operation not permitted) - DavPosix::unlink  HTTP 403 : Permission refused
 ```
+
+#### JWT with optional groups
 
 Now ask for a token with the optional `dev/webdav` group
 
