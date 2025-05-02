@@ -12,7 +12,7 @@ services:
     hostname: db
     volumes:
      - db_data:/var/lib/mysql
-     - ./assets/db:/docker-entrypoint-initdb.d
+     - ../iam-db:/docker-entrypoint-initdb.d
     
     env_file:
       - env-files/db.env
