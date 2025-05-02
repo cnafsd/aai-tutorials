@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2014 Istituto Nazionale di Fisica Nucleare
+#
+# SPDX-License-Identifier: Apache-2.0
+
+storm:
+  authz:
+    policies:
+    - sa: fga
+      actions:
+      - all
+      effect: permit
+      description: Grant read/write to the SA to /dev/webdav members and users with VOMS role = webdav
+      principals:
+      - type: jwt-group
+        params:
+          iss: https://iam-dev.cloud.cnaf.infn.it/
+          group: /dev/webdav
+      - type: fqan
+        params:
+          fqan: /dev/Role=webdav
+    - sa: fga
+      actions:
+      - list
+      - read
+      effect: permit
+      description: Grant read access to tokens issued by iam-dev and proxies obtain by dev VO
+      principals:
+      - type: jwt-issuer
+        params:
+          iss: https://iam-dev.cloud.cnaf.infn.it/
+      - type: vo
+        params:
+          vo: dev
+    - sa: fga
+      actions:
+      - list
+      - read
+      effect: permit
+      description: Grant read access to anyone to the public area
+      paths:
+      - /public/**
+      principals:
+      - type: anyone

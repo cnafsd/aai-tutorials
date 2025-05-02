@@ -39,10 +39,13 @@ chmod 400 "${certs_dir}"/*.key.pem
 chmod 600 "${certs_dir}"/*.p12
 chown 1000:1000 "${certs_dir}"/*
 
-# Create LSC file for test.vo
+# Create LSC files
 mkdir -p "${vomsdir}"/test.vo
 openssl x509 -in "${certs_dir}"/voms_test_example.cert.pem -noout -subject -issuer -nameopt compat \
   | sed -e 's/subject=//' -e 's/issuer=//' > "${vomsdir}"/test.vo/voms.test.example.lsc
+
+mkdir -p "${vomsdir}"/dev
+cp "${vomsdir}"/test.vo/voms.test.example.lsc "${vomsdir}"/dev
 
 # Create user certificates
 for i in $(seq 0 5); do
@@ -57,14 +60,17 @@ make_cert.sh revoked
 cp igi_test_ca/certs/revoked.* "${certs_dir}"
 revoke_cert.sh revoked
 
-proxy_name=x509up_test.vo
-echo pass | voms-proxy-fake --debug -conf proxies.d/${proxy_name}.conf -out "${certs_dir}"/${proxy_name} \
-  --pwstdin
-chmod 600 "${certs_dir}"/${proxy_name}
-
 chmod 600 "${certs_dir}"/*.cert.pem
 chmod 400 "${certs_dir}"/*.key.pem
 chmod 600 "${certs_dir}"/*.p12
+
+# Create user proxies
+for p in x509up_test.vo x509up_dev x509up_dev_role; do
+  echo pass | voms-proxy-fake --debug -conf proxies.d/${p}.conf -out "${certs_dir}"/${p} \
+    --pwstdin
+done
+chmod 600 "${certs_dir}"/x509up_*
+
 chown 1000:1000 "${certs_dir}"/*
 
 make_crl.sh

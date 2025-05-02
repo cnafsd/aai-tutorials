@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: 2014 Istituto Nazionale di Fisica Nucleare
+#
+# SPDX-License-Identifier: Apache-2.0
+
+oauth:
+  issuers:
+    - name: dev
+      issuer: https://iam-dev.cloud.cnaf.infn.it/
