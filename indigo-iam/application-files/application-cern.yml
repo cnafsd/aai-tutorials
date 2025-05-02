@@ -1,0 +1,25 @@
+cern:
+  experimentName: atlas
+  person-id-claim: cern_person_id
+  task:
+    enabled: true
+    ## Cron schedule here include seconds as the first field, pay attention!
+    cron-schedule: "0 0 */12 * * *" 
+
+iam:
+  token-enhancer:
+    include-labels:
+      - label:
+          name: cern_person_id
+          prefix: hr.cern
+        claim_name: cern_person_id
+
+scim:
+  include_labels:
+    - name: cern_person_id
+      prefix: hr.cern
+
+lifecycle:
+  account:
+    read-only-end-time: true
+

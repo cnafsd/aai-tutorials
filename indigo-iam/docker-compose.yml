@@ -1,0 +1,117 @@
+volumes:
+  db_data:
+  trustanchors:
+  cabundle:
+  certs:
+
+services:
+
+  db:
+    image: ${DB_IMAGE}:${DB_IMAGE_TAG}
+    container_name: db
+    hostname: db
+    volumes:
+     - db_data:/var/lib/mysql
+     - ./assets/db:/docker-entrypoint-initdb.d
+    
+    env_file:
+      - env-files/db.env
+
+    ports:
+      - "3307:3307"
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3307", "--silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 0s
+
+  trust:
+    build:
+      context: ../trust
+    volumes:
+      - trustanchors:/trust-anchors
+      - cabundle:/etc/pki
+      - certs:/certs
+
+  iam-be:
+    container_name: iam-be
+    image: ${IAM_IMAGE}:${IAM_IMAGE_TAG}
+    
+    env_file:
+      - env-files/login-service.env
+      - env-files/iam-dev.env
+      - env-files/orcid.env
+      - env-files/keystore.env
+
+    ports:
+      - "1044:1044"
+
+    depends_on:
+      db:
+        condition: service_healthy
+      trust:
+        condition: service_completed_successfully
+
+    volumes:
+      - trustanchors:/etc/grid-security/certificates
+      - /dev/urandom:/dev/random
+      - ./assets/keystore.jwks:/indigo-iam/config/keystore.jwks:ro
+      - ./img/:/local-resources/
+      - ./application-files/application-oidc.yml:/indigo-iam/config/application-oidc.yml:ro
+      - ./application-files/application-saml.yml:/indigo-iam/config/application-saml.yml:ro
+      - ./application-files/application-sp-saml.yml:/indigo-iam/config/application-sp-saml.yml:ro
+      - ./application-files/application-mysql.yml:/indigo-iam/config/application-mysql.yml:ro
+      - ./email-templates/resetPassword.ftl:/indigo-iam/WEB-INF/classes/email-templates/resetPassword.ftl
+
+  client:
+    image: ${CLIENT_IMAGE}:${CLIENT_IMAGE_TAG}
+    container_name: client
+
+    depends_on:
+      trust:
+        condition: service_completed_successfully
+
+    env_file:
+      - env-files/test-client.env
+
+    ports:
+      - "1045:1045"
+
+    volumes:
+      - trustanchors:/etc/grid-security/certificates
+
+  iam:
+    image: ${NGINX_IMAGE}:${NGINX_IMAGE_TAG}
+    container_name: iam
+
+    depends_on:
+      iam-be:
+        condition: service_started
+      client:
+        condition: service_started
+      trust:
+        condition: service_completed_successfully
+
+    dns_search: test.example
+
+    environment:
+      TZ: Europe/Rome
+      NGINX_HOST: iam
+      NGINX_PORT: 443
+
+    ports:
+      - "443:443"
+
+    volumes:
+      - /dev/urandom:/dev/random
+      - cabundle:/etc/pki
+      - certs:/certs
+      - ./assets/nginx/iam.conf:/etc/nginx/conf.d/default.conf
+      - ./assets/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+    networks:
+      default:
+        aliases:
+          - iam.test.example

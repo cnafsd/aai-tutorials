@@ -1,0 +1,10 @@
+saml:
+  entity-id: ${IAM_SAML_ENTITY_ID}
+  keystore: classpath:/saml/samlKeystore.jks
+  keystore-password: ${KEYSTORE_SECRET}
+  key-id: ${KEYSTORE_ID}
+  key-password: ${KEYSTORE_SECRET}
+
+  local-metadata:
+    generated: false
+    location-url: classpath:/saml/iam.local.io.metadata.xml

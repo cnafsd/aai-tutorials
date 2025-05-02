@@ -1,0 +1,24 @@
+saml:
+
+  nameid-policy: unspecified
+  id-resolvers: eduPersonUniqueId,eduPersonTargetedId,eduPersonPrincipalName,persistentNameID
+
+  wayf-login-button:
+    text:
+    image:
+      url: https://edugain.org/wp-content/uploads/2018/02/eduGAIN.png
+
+  idp-metadata:
+    -
+      metadata-url: ${IAM_SAML_IDP_METADATA} 
+      require-valid-signature: false
+      require-sirtfi: false
+      require-rs: false
+
+iam:
+  registration:
+    require-external-authentication: false
+    fields:
+      email:
+        read-only: false
+        external-auth-attribute: email
