@@ -15,7 +15,7 @@ services:
      - ../iam-db:/docker-entrypoint-initdb.d
     
     env_file:
-      - env-files/db.env
+      - ../iam-db/db.env
 
     ports:
       - "3307:3307"
