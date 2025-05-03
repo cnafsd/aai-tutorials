@@ -728,7 +728,7 @@ CREATE TABLE `client_redirect_uri` (
 
 LOCK TABLES `client_redirect_uri` WRITE;
 /*!40000 ALTER TABLE `client_redirect_uri` DISABLE KEYS */;
-INSERT INTO `client_redirect_uri` VALUES (1,'http://localhost:9090/iam-test-client/openid_connect_login'),(1,'https://iam.local.io/iam-test-client/openid_connect_login'),(3,'http://localhost:4000/callback'),(4,'http://localhost:5000/callback'),(11,'http://localhost:1234/callback'),(13,'http://localhost:9876/implicit');
+INSERT INTO `client_redirect_uri` VALUES (1,'http://localhost:9090/iam-test-client/openid_connect_login'),(1,'https://iam.test.example/iam-test-client/openid_connect_login'),(3,'http://localhost:4000/callback'),(4,'http://localhost:5000/callback'),(11,'http://localhost:1234/callback'),(13,'http://localhost:9876/implicit');
 /*!40000 ALTER TABLE `client_redirect_uri` ENABLE KEYS */;
 UNLOCK TABLES;
 

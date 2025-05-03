@@ -7,4 +7,6 @@ The database is populated with an IAM Admin, test users, attributes, linked cert
 The credentials used to login are
 
 * Admin user: admin/password
-* user test_0: test/password
+* user test: test/password
+
+This dump is used by iam-login-service (read/write mode) and voms-aa (read-only).
