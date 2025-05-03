@@ -18,6 +18,17 @@ In partular, it populates the following volumes
 * `/certs`: contains server/user X.509 certificates, emitted by the
   `igi-test-ca`. Also VOMS proxies are present here.
 
+More user/server X.509 certificates and VOMS proxies can be generated with custom configuration by adding a `*.conf` file in
+
+* [conf.d](./x509/conf.d/) for user/server certificates
+* [proxies.d](./x509/proxies.d/) for VOMS proxies.
+
+The [setup-trust.sh](./x509/setup-trust.sh) script must be updated as well if
+
+* adding a server certificate (`make_cert` and set proper permissions)
+* adding a user certificate which is not using the pattern `test<nb>` (`make_cert` and set proper permissions)
+* adding a VOMS proxy not issued by an already defined VO (you need to create the proper LSC file).
+
 **Tip:** Some docker versions use a buildx image which caches some layer of the build image to speedup the container start time. This is in conflict with the creation with on-the-fly certificates. To disable this behavior, first
 stop the container
 
