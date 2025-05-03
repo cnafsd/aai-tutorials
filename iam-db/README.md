@@ -28,3 +28,10 @@ Enter in the container and connect to the db with
 docker-compose exec db bash
 mysql -u iam -ppwd -P3307 iam
 ```
+
+To create a dump of the database connect into the db and
+
+```bash
+docker-compose exec db bash
+mysqldump -u root -ppwd -P3307 iam > dbdump.sql
+```

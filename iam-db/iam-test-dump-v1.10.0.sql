@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.4.3, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Linux (x86_64)
 --
--- Host: localhost    Database: iam
+-- Host: iam.local.io    Database: iam
 -- ------------------------------------------------------
--- Server version	8.4.3
+-- Server version	5.7.34
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -23,15 +23,15 @@ DROP TABLE IF EXISTS `access_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `access_token` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `token_value` varchar(4096) DEFAULT NULL,
   `expiration` timestamp NULL DEFAULT NULL,
   `token_type` varchar(256) DEFAULT NULL,
-  `refresh_token_id` bigint DEFAULT NULL,
-  `client_id` bigint DEFAULT NULL,
-  `auth_holder_id` bigint DEFAULT NULL,
-  `id_token_id` bigint DEFAULT NULL,
-  `approved_site_id` bigint DEFAULT NULL,
+  `refresh_token_id` bigint(20) DEFAULT NULL,
+  `client_id` bigint(20) DEFAULT NULL,
+  `auth_holder_id` bigint(20) DEFAULT NULL,
+  `id_token_id` bigint(20) DEFAULT NULL,
+  `approved_site_id` bigint(20) DEFAULT NULL,
   `token_value_hash` char(64) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `at_tvh_idx` (`token_value_hash`),
@@ -63,8 +63,8 @@ DROP TABLE IF EXISTS `access_token_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `access_token_permissions` (
-  `access_token_id` bigint NOT NULL,
-  `permission_id` bigint NOT NULL,
+  `access_token_id` bigint(20) NOT NULL,
+  `permission_id` bigint(20) NOT NULL,
   PRIMARY KEY (`access_token_id`,`permission_id`),
   KEY `FK_access_token_permissions_permission_id` (`permission_id`),
   CONSTRAINT `FK_access_token_permissions_access_token_id` FOREIGN KEY (`access_token_id`) REFERENCES `access_token` (`id`) ON DELETE CASCADE,
@@ -89,7 +89,7 @@ DROP TABLE IF EXISTS `address`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `address` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `formatted` varchar(256) DEFAULT NULL,
   `street_address` varchar(256) DEFAULT NULL,
   `locality` varchar(256) DEFAULT NULL,
@@ -117,13 +117,13 @@ DROP TABLE IF EXISTS `approved_site`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `approved_site` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` varchar(256) DEFAULT NULL,
   `client_id` varchar(256) DEFAULT NULL,
   `creation_date` timestamp NULL DEFAULT NULL,
   `access_date` timestamp NULL DEFAULT NULL,
   `timeout_date` timestamp NULL DEFAULT NULL,
-  `whitelisted_site_id` bigint DEFAULT NULL,
+  `whitelisted_site_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_approved_site_client_id` (`client_id`),
   CONSTRAINT `FK_approved_site_client_id` FOREIGN KEY (`client_id`) REFERENCES `client_details` (`client_id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -147,7 +147,7 @@ DROP TABLE IF EXISTS `approved_site_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `approved_site_scope` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `scope` varchar(256) DEFAULT NULL,
   KEY `FK_approved_site_scope_owner_id` (`owner_id`),
   CONSTRAINT `FK_approved_site_scope_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `approved_site` (`id`) ON DELETE CASCADE
@@ -171,8 +171,8 @@ DROP TABLE IF EXISTS `authentication_holder`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `authentication_holder` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_auth_id` bigint DEFAULT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_auth_id` bigint(20) DEFAULT NULL,
   `approved` tinyint(1) DEFAULT NULL,
   `redirect_uri` varchar(2048) DEFAULT NULL,
   `client_id` varchar(256) DEFAULT NULL,
@@ -201,7 +201,7 @@ DROP TABLE IF EXISTS `authentication_holder_authority`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `authentication_holder_authority` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `authority` varchar(256) DEFAULT NULL,
   KEY `aha_oi_idx` (`owner_id`),
   CONSTRAINT `FK_authentication_holder_authority_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `authentication_holder` (`id`) ON DELETE CASCADE
@@ -225,7 +225,7 @@ DROP TABLE IF EXISTS `authentication_holder_extension`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `authentication_holder_extension` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `extension` varchar(2048) DEFAULT NULL,
   `val` varchar(2048) DEFAULT NULL,
   KEY `ahe_oi_idx` (`owner_id`),
@@ -250,7 +250,7 @@ DROP TABLE IF EXISTS `authentication_holder_request_parameter`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `authentication_holder_request_parameter` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `param` varchar(2048) DEFAULT NULL,
   `val` varchar(2048) DEFAULT NULL,
   KEY `ahrp_oi_idx` (`owner_id`),
@@ -275,7 +275,7 @@ DROP TABLE IF EXISTS `authentication_holder_resource_id`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `authentication_holder_resource_id` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `resource_id` varchar(2048) DEFAULT NULL,
   KEY `ahri_oi_idx` (`owner_id`),
   CONSTRAINT `FK_authentication_holder_resource_id_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `authentication_holder` (`id`) ON DELETE CASCADE
@@ -299,7 +299,7 @@ DROP TABLE IF EXISTS `authentication_holder_response_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `authentication_holder_response_type` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `response_type` varchar(2048) DEFAULT NULL,
   KEY `ahrt_oi_idx` (`owner_id`),
   CONSTRAINT `FK_authentication_holder_response_type_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `authentication_holder` (`id`) ON DELETE CASCADE
@@ -323,7 +323,7 @@ DROP TABLE IF EXISTS `authentication_holder_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `authentication_holder_scope` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `scope` varchar(2048) DEFAULT NULL,
   KEY `ahs_oi_idx` (`owner_id`),
   CONSTRAINT `FK_authentication_holder_scope_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `authentication_holder` (`id`) ON DELETE CASCADE
@@ -347,9 +347,9 @@ DROP TABLE IF EXISTS `authorization_code`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `authorization_code` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `code` varchar(256) DEFAULT NULL,
-  `auth_holder_id` bigint DEFAULT NULL,
+  `auth_holder_id` bigint(20) DEFAULT NULL,
   `expiration` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `ac_ahi_idx` (`auth_holder_id`),
@@ -374,7 +374,7 @@ DROP TABLE IF EXISTS `blacklisted_site`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `blacklisted_site` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `uri` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -397,7 +397,7 @@ DROP TABLE IF EXISTS `claim`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `claim` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(256) DEFAULT NULL,
   `friendly_name` varchar(1024) DEFAULT NULL,
   `claim_type` varchar(1024) DEFAULT NULL,
@@ -423,7 +423,7 @@ DROP TABLE IF EXISTS `claim_issuer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `claim_issuer` (
-  `owner_id` bigint NOT NULL,
+  `owner_id` bigint(20) NOT NULL,
   `issuer` varchar(1024) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -445,8 +445,8 @@ DROP TABLE IF EXISTS `claim_to_permission_ticket`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `claim_to_permission_ticket` (
-  `permission_ticket_id` bigint NOT NULL,
-  `claim_id` bigint NOT NULL
+  `permission_ticket_id` bigint(20) NOT NULL,
+  `claim_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -467,8 +467,8 @@ DROP TABLE IF EXISTS `claim_to_policy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `claim_to_policy` (
-  `policy_id` bigint NOT NULL,
-  `claim_id` bigint NOT NULL
+  `policy_id` bigint(20) NOT NULL,
+  `claim_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -489,7 +489,7 @@ DROP TABLE IF EXISTS `claim_token_format`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `claim_token_format` (
-  `owner_id` bigint NOT NULL,
+  `owner_id` bigint(20) NOT NULL,
   `claim_token_format` varchar(1024) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -511,7 +511,7 @@ DROP TABLE IF EXISTS `client_authority`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_authority` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `authority` varchar(256) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -533,7 +533,7 @@ DROP TABLE IF EXISTS `client_claims_redirect_uri`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_claims_redirect_uri` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `redirect_uri` varchar(2048) DEFAULT NULL,
   KEY `FK_client_claims_redirect_uri_owner_id` (`owner_id`),
   CONSTRAINT `FK_client_claims_redirect_uri_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `client_details` (`id`) ON DELETE CASCADE
@@ -557,7 +557,7 @@ DROP TABLE IF EXISTS `client_contact`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_contact` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `contact` varchar(256) DEFAULT NULL,
   KEY `FK_client_contact_owner_id` (`owner_id`),
   CONSTRAINT `FK_client_contact_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `client_details` (`id`) ON DELETE CASCADE
@@ -581,7 +581,7 @@ DROP TABLE IF EXISTS `client_default_acr_value`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_default_acr_value` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `default_acr_value` varchar(2000) DEFAULT NULL,
   KEY `FK_client_default_acr_value_owner_id` (`owner_id`),
   CONSTRAINT `FK_client_default_acr_value_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `client_details` (`id`) ON DELETE CASCADE
@@ -605,16 +605,16 @@ DROP TABLE IF EXISTS `client_details`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_details` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `client_description` varchar(1024) DEFAULT NULL,
   `reuse_refresh_tokens` tinyint(1) NOT NULL DEFAULT '1',
   `dynamically_registered` tinyint(1) NOT NULL DEFAULT '0',
   `allow_introspection` tinyint(1) NOT NULL DEFAULT '0',
-  `id_token_validity_seconds` bigint NOT NULL DEFAULT '600',
+  `id_token_validity_seconds` bigint(20) NOT NULL DEFAULT '600',
   `client_id` varchar(256) DEFAULT NULL,
   `client_secret` text,
-  `access_token_validity_seconds` bigint DEFAULT NULL,
-  `refresh_token_validity_seconds` bigint DEFAULT NULL,
+  `access_token_validity_seconds` bigint(20) DEFAULT NULL,
+  `refresh_token_validity_seconds` bigint(20) DEFAULT NULL,
   `application_type` varchar(256) DEFAULT NULL,
   `client_name` varchar(256) DEFAULT NULL,
   `token_endpoint_auth_method` varchar(256) DEFAULT NULL,
@@ -634,7 +634,7 @@ CREATE TABLE `client_details` (
   `id_token_encrypted_response_alg` varchar(256) DEFAULT NULL,
   `id_token_encrypted_response_enc` varchar(256) DEFAULT NULL,
   `token_endpoint_auth_signing_alg` varchar(256) DEFAULT NULL,
-  `default_max_age` bigint DEFAULT NULL,
+  `default_max_age` bigint(20) DEFAULT NULL,
   `require_auth_time` tinyint(1) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `initiate_login_uri` varchar(2048) DEFAULT NULL,
@@ -643,10 +643,7 @@ CREATE TABLE `client_details` (
   `code_challenge_method` varchar(256) DEFAULT NULL,
   `software_id` text,
   `software_version` text,
-  `device_code_validity_seconds` bigint DEFAULT NULL,
-  `active` tinyint(1) DEFAULT '1',
-  `status_changed_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `status_changed_by` varchar(36) DEFAULT NULL,
+  `device_code_validity_seconds` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `client_id` (`client_id`),
   KEY `cd_ci_idx` (`client_id`)
@@ -659,7 +656,7 @@ CREATE TABLE `client_details` (
 
 LOCK TABLES `client_details` WRITE;
 /*!40000 ALTER TABLE `client_details` DISABLE KEYS */;
-INSERT INTO `client_details` VALUES (1,NULL,1,0,1,600,'client','secret',3600,NULL,NULL,'Test Client','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(2,NULL,1,0,1,0,'tasks-app','secret',0,NULL,NULL,'Tasks App','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(3,NULL,1,0,1,600,'post-client','secret',3600,NULL,NULL,'Post client','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(4,NULL,1,0,1,600,'client-cred','secret',3600,NULL,NULL,'Client credentials','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(5,NULL,1,0,1,600,'password-grant','secret',3600,NULL,NULL,'Password grant client','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(6,NULL,1,0,1,600,'scim-client-ro','secret',3600,NULL,NULL,'SCIM client (read-only)','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(7,NULL,1,0,1,600,'scim-client-rw','secret',3600,NULL,NULL,'SCIM client (read-write)','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(8,NULL,1,0,1,600,'token-exchange-actor','secret',3600,NULL,NULL,'Token Exchange grant client actor','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(9,NULL,1,0,1,600,'token-exchange-subject','secret',3600,NULL,NULL,'Token Exchange grant client subject','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(10,NULL,1,0,1,600,'registration-client','secret',3600,NULL,NULL,'Registration service test client','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(11,NULL,1,0,1,600,'token-lookup-client','secret',3600,NULL,NULL,'Token lookup client','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(12,NULL,1,0,1,600,'device-code-client','secret',3600,NULL,NULL,'Device code client','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,600,1,'2025-05-03 02:38:12',NULL),(13,NULL,1,0,0,600,'implicit-flow-client',NULL,3600,NULL,NULL,'Implicit Flow client',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,600,1,'2025-05-03 02:38:12',NULL),(14,NULL,1,0,0,600,'public-dc-client',NULL,3600,NULL,NULL,'Public Device Code client',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,600,1,'2025-05-03 02:38:12',NULL),(15,NULL,1,0,1,600,'jwt-auth-client_secret_jwt','c8e9eed0-e6e4-4a66-b16e-6f37096356a7',3600,NULL,NULL,'JWT Bearer Auth Client (client_secret_jwt)','SECRET_JWT',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'HS256',NULL,0,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(16,NULL,1,0,1,600,'jwt-auth-private_key_jwt','secret',3600,NULL,NULL,'JWT Bearer Auth Client (private_key_jwt)','PRIVATE_KEY',NULL,NULL,NULL,NULL,NULL,NULL,'{\"keys\":[{\"kty\":\"RSA\",\"e\":\"AQAB\",\"kid\":\"rsa1\",\"n\":\"1y1CP181zqPNPlV1JDM7Xv0QnGswhSTHe8_XPZHxDTJkykpk_1BmgA3ovP62QRE2ORgsv5oSBI_Z_RaOc4Zx2FonjEJF2oBHtBjsAiF-pxGkM5ZPjFNgFTGp1yUUBjFDcEeIGCwPEyYSt93sQIP_0DRbViMUnpyn3xgM_a1dO5brEWR2n1Uqff1yA5NXfLS03qpl2dpH4HFY5-Zs4bvtJykpAOhoHuIQbz-hmxb9MZ3uTAwsx2HiyEJtz-suyTBHO3BM2o8UcCeyfa34ShPB8i86-sf78fOk2KeRIW1Bju3ANmdV3sxL0j29cesxKCZ06u2ZiGR3Srbft8EdLPzf-w\"}]}',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RS256',NULL,0,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(17,NULL,1,0,1,600,'admin-client-ro','secret',3600,NULL,NULL,'Admin client (read-only)','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL),(18,NULL,1,0,1,600,'admin-client-rw','secret',3600,NULL,NULL,'Admin client (read-write)','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL,1,'2025-05-03 02:38:12',NULL);
+INSERT INTO `client_details` VALUES (1,NULL,1,0,1,600,'client','secret',3600,NULL,NULL,'Test Client','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(2,NULL,1,0,1,0,'tasks-app','secret',0,NULL,NULL,'Tasks App','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(3,NULL,1,0,1,600,'post-client','secret',3600,NULL,NULL,'Post client','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(4,NULL,1,0,1,600,'client-cred','secret',3600,NULL,NULL,'Client credentials','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(5,NULL,1,0,1,600,'password-grant','secret',3600,NULL,NULL,'Password grant client','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(6,NULL,1,0,1,600,'scim-client-ro','secret',3600,NULL,NULL,'SCIM client (read-only)','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(7,NULL,1,0,1,600,'scim-client-rw','secret',3600,NULL,NULL,'SCIM client (read-write)','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(8,NULL,1,0,1,600,'token-exchange-actor','secret',3600,NULL,NULL,'Token Exchange grant client actor','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(9,NULL,1,0,1,600,'token-exchange-subject','secret',3600,NULL,NULL,'Token Exchange grant client subject','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(10,NULL,1,0,1,600,'registration-client','secret',3600,NULL,NULL,'Registration service test client','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(11,NULL,1,0,1,600,'token-lookup-client','secret',3600,NULL,NULL,'Token lookup client','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(12,NULL,1,0,1,600,'device-code-client','secret',3600,NULL,NULL,'Device code client','SECRET_BASIC',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,600),(13,NULL,1,0,0,600,'implicit-flow-client',NULL,3600,NULL,NULL,'Implicit Flow client',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,600),(14,NULL,1,0,0,600,'public-dc-client',NULL,3600,NULL,NULL,'Public Device Code client',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,600),(15,NULL,1,0,1,600,'jwt-auth-client_secret_jwt','c8e9eed0-e6e4-4a66-b16e-6f37096356a7',3600,NULL,NULL,'JWT Bearer Auth Client (client_secret_jwt)','SECRET_JWT',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'HS256',NULL,0,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL),(16,NULL,1,0,1,600,'jwt-auth-private_key_jwt','secret',3600,NULL,NULL,'JWT Bearer Auth Client (private_key_jwt)','PRIVATE_KEY',NULL,NULL,NULL,NULL,NULL,NULL,'{\"keys\":[{\"kty\":\"RSA\",\"e\":\"AQAB\",\"kid\":\"rsa1\",\"n\":\"1y1CP181zqPNPlV1JDM7Xv0QnGswhSTHe8_XPZHxDTJkykpk_1BmgA3ovP62QRE2ORgsv5oSBI_Z_RaOc4Zx2FonjEJF2oBHtBjsAiF-pxGkM5ZPjFNgFTGp1yUUBjFDcEeIGCwPEyYSt93sQIP_0DRbViMUnpyn3xgM_a1dO5brEWR2n1Uqff1yA5NXfLS03qpl2dpH4HFY5-Zs4bvtJykpAOhoHuIQbz-hmxb9MZ3uTAwsx2HiyEJtz-suyTBHO3BM2o8UcCeyfa34ShPB8i86-sf78fOk2KeRIW1Bju3ANmdV3sxL0j29cesxKCZ06u2ZiGR3Srbft8EdLPzf-w\"}]}',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RS256',NULL,0,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL),(17,NULL,1,0,1,600,'admin-client-ro','secret',3600,NULL,NULL,'Admin client (read-only)','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL),(18,NULL,1,0,1,600,'admin-client-rw','secret',3600,NULL,NULL,'Admin client (read-write)','SECRET_POST',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'2024-03-01 10:57:22',NULL,1,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `client_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -671,7 +668,7 @@ DROP TABLE IF EXISTS `client_grant_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_grant_type` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `grant_type` varchar(2000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -687,30 +684,6 @@ INSERT INTO `client_grant_type` VALUES (1,'authorization_code'),(1,'urn:ietf:par
 UNLOCK TABLES;
 
 --
--- Table structure for table `client_last_used`
---
-
-DROP TABLE IF EXISTS `client_last_used`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `client_last_used` (
-  `client_details_id` bigint NOT NULL,
-  `last_used` timestamp NOT NULL,
-  PRIMARY KEY (`client_details_id`),
-  CONSTRAINT `fk_client_last_used` FOREIGN KEY (`client_details_id`) REFERENCES `client_details` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `client_last_used`
---
-
-LOCK TABLES `client_last_used` WRITE;
-/*!40000 ALTER TABLE `client_last_used` DISABLE KEYS */;
-/*!40000 ALTER TABLE `client_last_used` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `client_post_logout_redirect_uri`
 --
 
@@ -718,7 +691,7 @@ DROP TABLE IF EXISTS `client_post_logout_redirect_uri`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_post_logout_redirect_uri` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `post_logout_redirect_uri` varchar(2000) DEFAULT NULL,
   KEY `FK_client_post_logout_redirect_uri_owner_id` (`owner_id`),
   CONSTRAINT `FK_client_post_logout_redirect_uri_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `client_details` (`id`) ON DELETE CASCADE
@@ -742,7 +715,7 @@ DROP TABLE IF EXISTS `client_redirect_uri`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_redirect_uri` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `redirect_uri` varchar(2048) DEFAULT NULL,
   KEY `FK_client_redirect_uri_owner_id` (`owner_id`),
   CONSTRAINT `FK_client_redirect_uri_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `client_details` (`id`) ON DELETE CASCADE
@@ -767,7 +740,7 @@ DROP TABLE IF EXISTS `client_request_uri`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_request_uri` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `request_uri` varchar(2000) DEFAULT NULL,
   KEY `FK_client_request_uri_owner_id` (`owner_id`),
   CONSTRAINT `FK_client_request_uri_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `client_details` (`id`) ON DELETE CASCADE
@@ -791,7 +764,7 @@ DROP TABLE IF EXISTS `client_resource`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_resource` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `resource_id` varchar(256) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -813,7 +786,7 @@ DROP TABLE IF EXISTS `client_response_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_response_type` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `response_type` varchar(2000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -835,7 +808,7 @@ DROP TABLE IF EXISTS `client_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_scope` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `scope` varchar(2048) DEFAULT NULL,
   KEY `FK_client_scope_owner_id` (`owner_id`),
   CONSTRAINT `FK_client_scope_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `client_details` (`id`) ON DELETE CASCADE
@@ -860,13 +833,13 @@ DROP TABLE IF EXISTS `device_code`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `device_code` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `device_code` varchar(1024) DEFAULT NULL,
   `user_code` varchar(1024) DEFAULT NULL,
   `expiration` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `client_id` varchar(256) DEFAULT NULL,
   `approved` tinyint(1) DEFAULT NULL,
-  `auth_holder_id` bigint DEFAULT NULL,
+  `auth_holder_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -888,7 +861,7 @@ DROP TABLE IF EXISTS `device_code_request_parameter`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `device_code_request_parameter` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `param` varchar(2048) DEFAULT NULL,
   `val` varchar(2048) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -911,7 +884,7 @@ DROP TABLE IF EXISTS `device_code_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `device_code_scope` (
-  `owner_id` bigint NOT NULL,
+  `owner_id` bigint(20) NOT NULL,
   `scope` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -933,14 +906,14 @@ DROP TABLE IF EXISTS `iam_account`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_account` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `active` tinyint(1) NOT NULL DEFAULT '0',
   `CREATIONTIME` datetime NOT NULL,
   `LASTUPDATETIME` datetime NOT NULL,
   `PASSWORD` varchar(128) DEFAULT NULL,
   `USERNAME` varchar(128) NOT NULL,
   `UUID` varchar(36) NOT NULL,
-  `user_info_id` bigint DEFAULT NULL,
+  `user_info_id` bigint(20) DEFAULT NULL,
   `confirmation_key` varchar(36) DEFAULT NULL,
   `reset_key` varchar(36) DEFAULT NULL,
   `provisioned` tinyint(1) NOT NULL DEFAULT '0',
@@ -964,7 +937,7 @@ CREATE TABLE `iam_account` (
 
 LOCK TABLES `iam_account` WRITE;
 /*!40000 ALTER TABLE `iam_account` DISABLE KEYS */;
-INSERT INTO `iam_account` VALUES (1,1,'2024-03-01 11:57:08','2024-03-01 11:57:08','$2a$10$TQVxBo3zIgshOJ7UU8It2e3qeIPqHWjYHFNGN329t3mMEkqqA2rnW','admin','73f16d93-2441-4a50-88ff-85360d78c6b5',1,NULL,NULL,0,'2025-05-03 04:56:02',NULL),(2,1,'2024-03-01 11:57:22','2025-05-03 04:53:07','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test','80e5fb8d-b7c8-451a-89ba-346ae278a66f',2,NULL,NULL,0,NULL,NULL),(3,1,'2024-03-01 11:57:08','2024-03-01 11:57:08','$2a$10$drR4TBVnQJBRGnYeqjIfLOaVrT2LBZWpl8QVyejXISVPn4KEuS06y','dup_email_0','bffc67b7-47fe-410c-a6a0-cf00173a8fbb',3,NULL,NULL,0,NULL,NULL),(4,1,'2024-03-01 11:57:08','2024-03-01 11:57:08','$2a$10$pGkQBgJRxXw7LDX3gLF6BeE4e0ArLAM9Pa0aYhTihsRHCfcWk3CG6','dup_email_1','0a6fa72a-fb75-4a6c-9734-bfe673df70b3',4,NULL,NULL,0,NULL,NULL),(5,1,'2024-03-01 11:57:08','2024-03-01 11:57:08','$2a$10$KCOFVQDb5j0Q4ZisPMz5wuSeT4BoZ504qMnDrQ4Ch7jLNBNdkQtcO','dup_email_2','d836e5ec-246c-456c-8476-923ee2f831c8',5,NULL,NULL,0,NULL,NULL),(100,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_100','f2ce8cb2-a1db-4884-9ef0-d8842cc02b4a',100,NULL,NULL,0,NULL,NULL),(101,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_101','1a78b3b8-22d2-4746-9269-df55aceb036f',101,NULL,NULL,0,NULL,NULL),(102,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_102','a07d60c6-7ffa-475f-98e4-f9f648aa278b',102,NULL,NULL,0,NULL,NULL),(103,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_103','56e1b885-ea25-4ffc-ba17-fcde2b097d02',103,NULL,NULL,0,NULL,NULL),(104,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_104','67d2794d-c7fb-406e-9bc1-b66f43cbe60f',104,NULL,NULL,0,NULL,NULL),(105,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_105','d11e04f7-f369-4de6-9375-394f7d886ac7',105,NULL,NULL,0,NULL,NULL),(106,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_106','bbc76b76-9f9e-443b-8c63-cd775c50c6f3',106,NULL,NULL,0,NULL,NULL),(107,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_107','b15c850c-e6e0-4afb-a02d-374653bb102e',107,NULL,NULL,0,NULL,NULL),(108,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_108','afada6e8-d50d-47f6-912e-d6261605c771',108,NULL,NULL,0,NULL,NULL),(109,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_109','fa3b4c97-4787-4b49-a32c-5b4c74d5a7c8',109,NULL,NULL,0,NULL,NULL),(110,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_110','33165df6-4d49-4728-883c-3fd42720d46b',110,NULL,NULL,0,NULL,NULL),(111,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_111','15fb8d3a-003d-4ef9-8349-867d81d4ae9c',111,NULL,NULL,0,NULL,NULL),(112,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_112','7a4dda33-c2e5-4304-998a-3fa4df481123',112,NULL,NULL,0,NULL,NULL),(113,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_113','7013f989-0a95-43b5-8637-2e2360a73bb3',113,NULL,NULL,0,NULL,NULL),(114,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_114','12caabc8-4766-4028-98ff-f4d7f288a5f0',114,NULL,NULL,0,NULL,NULL),(115,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_115','f463ad2b-5814-4877-bb62-f954c67a8044',115,NULL,NULL,0,NULL,NULL),(116,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_116','28c656c4-5489-4654-a257-0806c6bab905',116,NULL,NULL,0,NULL,NULL),(117,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_117','11be5a72-9416-45fc-a0a7-f3e23c54bfda',117,NULL,NULL,0,NULL,NULL),(118,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_118','3cea2c01-786e-41a3-8fdf-4229cc4e3742',118,NULL,NULL,0,NULL,NULL),(119,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_119','e0247677-4542-4df3-8d75-8efa11e70911',119,NULL,NULL,0,NULL,NULL),(120,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_120','d905a115-d726-4e11-ba1f-b8482177bb05',120,NULL,NULL,0,NULL,NULL),(121,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_121','3479afd1-584c-4479-b6e2-25f6cef2f842',121,NULL,NULL,0,NULL,NULL),(122,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_122','8d4f467d-cb68-4feb-b898-71e4487e6820',122,NULL,NULL,0,NULL,NULL),(123,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_123','0ddee1c2-1426-4b83-b520-e20bdd8ef9b3',123,NULL,NULL,0,NULL,NULL),(124,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_124','b8b638be-6e09-4dbe-bcc0-776c2403e8c7',124,NULL,NULL,0,NULL,NULL),(125,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_125','1dc3108a-b5c0-4e5b-accd-925054075bc4',125,NULL,NULL,0,NULL,NULL),(126,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_126','5eed3374-c131-4513-84b7-dd0ff965da35',126,NULL,NULL,0,NULL,NULL),(127,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_127','2d0b4c36-0301-49f6-a20b-23b6ca48cee2',127,NULL,NULL,0,NULL,NULL),(128,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_128','db46065a-ba62-423d-9397-7bc6fab371a5',128,NULL,NULL,0,NULL,NULL),(129,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_129','d9dbaabf-c51a-45e5-aee1-25134ba283ac',129,NULL,NULL,0,NULL,NULL),(130,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_130','5678f40a-f361-464c-aa71-ffb48d163aaa',130,NULL,NULL,0,NULL,NULL),(131,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_131','209ae3b9-e266-4e57-a639-db29f61a7594',131,NULL,NULL,0,NULL,NULL),(132,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_132','f3fac505-d5c9-4d9c-83af-3976f357f19c',132,NULL,NULL,0,NULL,NULL),(133,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_133','13bfd34b-1dda-452e-bd9a-284aabccf07d',133,NULL,NULL,0,NULL,NULL),(134,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_134','15ccd152-1537-48d4-a55a-fd6565e5d86f',134,NULL,NULL,0,NULL,NULL),(135,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_135','6b2f4fc1-3e98-4f64-8fb4-517d2d4b3fa3',135,NULL,NULL,0,NULL,NULL),(136,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_136','398081ee-9c3c-4e5d-802c-90a4579030d4',136,NULL,NULL,0,NULL,NULL),(137,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_137','89a32317-dd45-481d-91a4-080e30c1f29e',137,NULL,NULL,0,NULL,NULL),(138,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_138','6dc0aa56-011d-45b8-bf26-cb03e8b40ccf',138,NULL,NULL,0,NULL,NULL),(139,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_139','cd62277e-5acf-41af-acea-b4d208cba29e',139,NULL,NULL,0,NULL,NULL),(140,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_140','0ae29eac-64ee-45b4-a2e7-e58b34c7ff0e',140,NULL,NULL,0,NULL,NULL),(141,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_141','0f7fe907-fa84-429e-8057-02d809375ba3',141,NULL,NULL,0,NULL,NULL),(142,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_142','7aa4a733-d318-4392-b3d3-6618263f667d',142,NULL,NULL,0,NULL,NULL),(143,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_143','b1d9b1ac-e77c-4d55-a895-cf0788ed2174',143,NULL,NULL,0,NULL,NULL),(144,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_144','f975f1f7-ad05-4d66-9905-d44c13cbd08b',144,NULL,NULL,0,NULL,NULL),(145,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_145','857f6e6d-e415-4850-a82b-59d557864910',145,NULL,NULL,0,NULL,NULL),(146,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_146','4e1c059c-1d06-4997-8bfa-5bd09fdb4571',146,NULL,NULL,0,NULL,NULL),(147,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_147','f4a0bc7f-b279-4caf-b8d1-c86a3c106f62',147,NULL,NULL,0,NULL,NULL),(148,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_148','007bbb9d-55b1-4f5e-80a5-bbcb22073db4',148,NULL,NULL,0,NULL,NULL),(149,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_149','a1d22bbf-9afe-49da-b75d-b58f825db351',149,NULL,NULL,0,NULL,NULL),(150,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_150','8c2351d5-5460-4b2d-b1bb-7b086130090e',150,NULL,NULL,0,NULL,NULL),(151,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_151','e6651896-66f8-4f63-b44f-71710fdb947c',151,NULL,NULL,0,NULL,NULL),(152,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_152','caf04a3c-8f35-40a3-99b6-48ba6a05d8b8',152,NULL,NULL,0,NULL,NULL),(153,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_153','d501e485-a306-4c9d-9baf-cc75f2321cfd',153,NULL,NULL,0,NULL,NULL),(154,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_154','57466d38-cae8-48bf-ac67-2cfc0266b5b0',154,NULL,NULL,0,NULL,NULL),(155,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_155','4bd5f059-f014-4356-8083-9c1a77adb6fd',155,NULL,NULL,0,NULL,NULL),(156,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_156','69130f52-f251-46fd-99ee-d646938e5f3f',156,NULL,NULL,0,NULL,NULL),(157,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_157','dedfb4f0-a545-44b3-abba-dd77103db894',157,NULL,NULL,0,NULL,NULL),(158,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_158','b5d98a8b-3780-4ace-ace1-ac12829dc469',158,NULL,NULL,0,NULL,NULL),(159,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_159','17de2f08-37fe-469d-b7b1-0e9ea9c6d2d8',159,NULL,NULL,0,NULL,NULL),(160,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_160','313abc40-4c88-45df-89e7-bd7bbf97b0fd',160,NULL,NULL,0,NULL,NULL),(161,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_161','c5d7fc06-16fc-4711-be37-27bbf2c2c07c',161,NULL,NULL,0,NULL,NULL),(162,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_162','ca31bf4d-f5da-4fc4-ae36-fd3cc0d35d7f',162,NULL,NULL,0,NULL,NULL),(163,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_163','dc98bb8e-4b91-4915-86fb-476c9503a936',163,NULL,NULL,0,NULL,NULL),(164,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_164','79dd006c-0e4c-4a79-8600-ef8a0ae5bc04',164,NULL,NULL,0,NULL,NULL),(165,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_165','05cdc1f7-7787-43d6-80c6-588277fefb9b',165,NULL,NULL,0,NULL,NULL),(166,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_166','dcdeb139-71ab-44f5-a709-ab33fec49882',166,NULL,NULL,0,NULL,NULL),(167,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_167','35a98804-b05e-47b0-917b-d72a4d4a5240',167,NULL,NULL,0,NULL,NULL),(168,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_168','5e4d4351-82c7-438d-8f83-ee2b7ebe1fe3',168,NULL,NULL,0,NULL,NULL),(169,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_169','e1a205e2-f202-402d-8542-4cfc529ef514',169,NULL,NULL,0,NULL,NULL),(170,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_170','a2e6271e-5b30-42d1-a211-494b98832676',170,NULL,NULL,0,NULL,NULL),(171,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_171','68515954-75ea-4022-9581-4cb4d28c6d6d',171,NULL,NULL,0,NULL,NULL),(172,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_172','41663b84-06b5-4787-a49e-1f745ca1eab3',172,NULL,NULL,0,NULL,NULL),(173,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_173','b257f456-bdae-4c58-8519-756abbda462a',173,NULL,NULL,0,NULL,NULL),(174,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_174','d848b9cb-05e4-4dcf-b9b7-431d83c41810',174,NULL,NULL,0,NULL,NULL),(175,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_175','b6859250-dcca-47ef-b013-f609468d2389',175,NULL,NULL,0,NULL,NULL),(176,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_176','e18bc682-897b-4696-a5ef-eee37a52a3de',176,NULL,NULL,0,NULL,NULL),(177,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_177','6b00471d-f496-4335-8209-5a9e13d18b9e',177,NULL,NULL,0,NULL,NULL),(178,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_178','35664644-7b32-4503-86f4-76adbb57762c',178,NULL,NULL,0,NULL,NULL),(179,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_179','7890415f-6563-4f25-bdf3-a5f45159a1b1',179,NULL,NULL,0,NULL,NULL),(180,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_180','a1edf880-e270-4dac-b69f-73e61c517397',180,NULL,NULL,0,NULL,NULL),(181,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_181','73520029-5901-4022-b9da-38ccd73fe799',181,NULL,NULL,0,NULL,NULL),(182,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_182','de5825a3-c585-45b3-88a1-7e5e80686826',182,NULL,NULL,0,NULL,NULL),(183,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_183','bb50b80a-f471-4f64-85fb-4e5051708a4a',183,NULL,NULL,0,NULL,NULL),(184,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_184','b7aa98b9-30da-468c-8566-06a5b804c4b9',184,NULL,NULL,0,NULL,NULL),(185,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_185','c230e253-f874-4365-8b0e-7ba5ebc1cc26',185,NULL,NULL,0,NULL,NULL),(186,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_186','7593dbbf-9286-460b-a234-32b560817f60',186,NULL,NULL,0,NULL,NULL),(187,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_187','ee1e2ce5-da23-4576-84e3-ad7cf4e0ce26',187,NULL,NULL,0,NULL,NULL),(188,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_188','bf1cc1be-f405-4282-b7be-9a4578670046',188,NULL,NULL,0,NULL,NULL),(189,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_189','e5ed670a-f944-40f0-8c10-d41c3350ead5',189,NULL,NULL,0,NULL,NULL),(190,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_190','8370db5c-e196-451a-9f5f-9b99c570cf46',190,NULL,NULL,0,NULL,NULL),(191,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_191','81498342-d247-4a60-80de-2c4cb4b1a84d',191,NULL,NULL,0,NULL,NULL),(192,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_192','213f1b3c-516e-4a6f-9785-d8c85d32f83e',192,NULL,NULL,0,NULL,NULL),(193,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_193','08ba27e6-b1b5-4d9e-a64a-6b5bc538bf43',193,NULL,NULL,0,NULL,NULL),(194,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_194','cf0cfa8e-377c-44a0-a6d1-a74ce1de08fb',194,NULL,NULL,0,NULL,NULL),(195,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_195','2ea66412-8dc2-4081-8d48-e3637ca82604',195,NULL,NULL,0,NULL,NULL),(196,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_196','4ed466eb-ee51-4433-9d0f-3a56216698a2',196,NULL,NULL,0,NULL,NULL),(197,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_197','cc03fc51-097d-43d6-bb6c-a0df72ec4838',197,NULL,NULL,0,NULL,NULL),(198,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_198','11844e66-8146-4263-aaa6-1fde7e5cfc58',198,NULL,NULL,0,NULL,NULL),(199,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_199','b5a954c6-69a9-473c-a4c4-83c4f7a88c1c',199,NULL,NULL,0,NULL,NULL),(200,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_200','167e359e-7833-4ce2-9f8b-f035cee39505',200,NULL,NULL,0,NULL,NULL),(201,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_201','5afb5430-a023-4a50-aa92-b134a0fb68b3',201,NULL,NULL,0,NULL,NULL),(202,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_202','de17b155-307c-4f9b-81f3-7f8b73d2526a',202,NULL,NULL,0,NULL,NULL),(203,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_203','c966145b-ac05-4a2c-874d-f7b585d1d03b',203,NULL,NULL,0,NULL,NULL),(204,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_204','1d88ea5a-ab5f-40b1-bd48-f18f86eef5d9',204,NULL,NULL,0,NULL,NULL),(205,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_205','6cb0be93-7829-4bfc-ba4a-4d2cdff45447',205,NULL,NULL,0,NULL,NULL),(206,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_206','e31a2ca7-fcaa-4b98-aac9-7e78f8605851',206,NULL,NULL,0,NULL,NULL),(207,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_207','f26899b7-64e0-4c16-9134-cef3774f1614',207,NULL,NULL,0,NULL,NULL),(208,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_208','606cf6ab-6b5e-45d1-83b8-e535b197d2f0',208,NULL,NULL,0,NULL,NULL),(209,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_209','617bfc4e-17b1-4ca7-b736-58a74c267747',209,NULL,NULL,0,NULL,NULL),(210,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_210','e5c26b7a-17bd-47ce-aac8-1430c57b8152',210,NULL,NULL,0,NULL,NULL),(211,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_211','7747bff5-b1e5-49b9-9a87-f93a5b790df0',211,NULL,NULL,0,NULL,NULL),(212,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_212','c6e5b631-1e91-4ecd-8358-214eec07a91d',212,NULL,NULL,0,NULL,NULL),(213,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_213','a874c7bd-97ac-4f48-bda5-7d3305d9067d',213,NULL,NULL,0,NULL,NULL),(214,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_214','c7938cc2-8032-424b-8f49-85558f95364b',214,NULL,NULL,0,NULL,NULL),(215,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_215','46017ce9-d4dd-4ddc-8b73-d596e23d25ad',215,NULL,NULL,0,NULL,NULL),(216,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_216','d5e66fd2-232e-476d-8de0-2bc1eb59630d',216,NULL,NULL,0,NULL,NULL),(217,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_217','097dc614-bc56-4f5f-a190-3ca1716a6400',217,NULL,NULL,0,NULL,NULL),(218,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_218','a3b97132-067f-4839-9b99-830a7fb659d4',218,NULL,NULL,0,NULL,NULL),(219,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_219','8d35557f-7451-4c54-bb17-9c3d204c48d3',219,NULL,NULL,0,NULL,NULL),(220,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_220','a6fba1ff-a5d7-4907-8cd4-1caa27cad85d',220,NULL,NULL,0,NULL,NULL),(221,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_221','427feb36-4401-4971-83de-f93672c028aa',221,NULL,NULL,0,NULL,NULL),(222,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_222','66541083-b1ab-4966-9f8b-8a1109fce0e0',222,NULL,NULL,0,NULL,NULL),(223,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_223','9939c37c-a9b9-43b7-9a4b-aacc470d47c4',223,NULL,NULL,0,NULL,NULL),(224,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_224','754379a0-bdc2-4a2d-9828-9480926b30ad',224,NULL,NULL,0,NULL,NULL),(225,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_225','18c870a1-9e2c-48fb-8a52-259e55e2052e',225,NULL,NULL,0,NULL,NULL),(226,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_226','02df9a97-b44c-4c46-ab3a-c11010d45e18',226,NULL,NULL,0,NULL,NULL),(227,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_227','20f609f7-c128-46b5-abeb-d16d46aab9ad',227,NULL,NULL,0,NULL,NULL),(228,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_228','75067ca5-872c-4149-85ad-f6685f14efc0',228,NULL,NULL,0,NULL,NULL),(229,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_229','b8639303-d15f-4c81-b9d2-2863f53737c3',229,NULL,NULL,0,NULL,NULL),(230,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_230','a0c4d9ea-7659-4009-ac7c-a3f089def76d',230,NULL,NULL,0,NULL,NULL),(231,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_231','d3605113-fb9a-4640-b6fe-9931594eba6c',231,NULL,NULL,0,NULL,NULL),(232,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_232','bf59d2cc-dd79-4ad6-9637-b04098768600',232,NULL,NULL,0,NULL,NULL),(233,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_233','304d5f24-274e-4fd6-aca4-97b761d1bd0c',233,NULL,NULL,0,NULL,NULL),(234,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_234','0d9491c3-c28b-4c11-8e28-14d93e612e35',234,NULL,NULL,0,NULL,NULL),(235,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_235','f73a809f-78a6-4214-8060-d6037fe391aa',235,NULL,NULL,0,NULL,NULL),(236,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_236','11cc494a-86a4-44d2-b5fd-06438f95d6a4',236,NULL,NULL,0,NULL,NULL),(237,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_237','55b2e8cc-aaa4-4a8b-8a83-f732188cfab2',237,NULL,NULL,0,NULL,NULL),(238,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_238','ebe14f0a-7bf7-4614-83c8-1e2da963139a',238,NULL,NULL,0,NULL,NULL),(239,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_239','3e83b092-95a1-4ee4-ac1f-e9df2f3954ad',239,NULL,NULL,0,NULL,NULL),(240,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_240','7304efcc-7974-453e-b2db-fdcc848f8a24',240,NULL,NULL,0,NULL,NULL),(241,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_241','6b0b51e8-f058-42a6-a9ed-3b6ebde935d8',241,NULL,NULL,0,NULL,NULL),(242,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_242','c10f6de1-a64d-4f8f-bd0a-47bcd72ab8f7',242,NULL,NULL,0,NULL,NULL),(243,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_243','5537408c-41c6-4ee5-8f59-ca70fcdbd0ae',243,NULL,NULL,0,NULL,NULL),(244,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_244','0a920520-e271-42a6-8dc1-89f090023c89',244,NULL,NULL,0,NULL,NULL),(245,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_245','a5120b27-cdd5-4209-b3da-bdf4b53db140',245,NULL,NULL,0,NULL,NULL),(246,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_246','cd0f900a-dab8-4a49-805d-97e57cb5ad4c',246,NULL,NULL,0,NULL,NULL),(247,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_247','53b8b68c-0a11-411a-9b4d-01d58c9c0ff0',247,NULL,NULL,0,NULL,NULL),(248,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_248','57114ddf-7bb8-4e68-952a-faa83bf276bf',248,NULL,NULL,0,NULL,NULL),(249,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_249','fa04c6fe-1bf0-489e-b0df-9fa4756bb90b',249,NULL,NULL,0,NULL,NULL),(250,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_250','5bf5b365-962e-4f6d-9576-94d5ac66cc3c',250,NULL,NULL,0,NULL,NULL),(251,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_251','eca96575-798c-4919-ba93-4f0eca487490',251,NULL,NULL,0,NULL,NULL),(252,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_252','d4e52ad1-ac1c-4f68-8d97-6858c8534f84',252,NULL,NULL,0,NULL,NULL),(253,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_253','74f88528-b57b-4482-a417-e7e8cf5ccd87',253,NULL,NULL,0,NULL,NULL),(254,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_254','f1b969bd-2e43-4981-80d1-baeba6afd456',254,NULL,NULL,0,NULL,NULL),(255,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_255','11f5bcd3-096b-4b0f-8f1b-fa9292e3f5f3',255,NULL,NULL,0,NULL,NULL),(256,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_256','b937e637-c00b-48de-8dd4-fae260cd9fb9',256,NULL,NULL,0,NULL,NULL),(257,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_257','49886ca5-c9a8-4c1f-9ef0-4784495e943c',257,NULL,NULL,0,NULL,NULL),(258,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_258','5cf6bbba-f2bf-4704-b288-36edb49a3c7a',258,NULL,NULL,0,NULL,NULL),(259,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_259','0a246675-78f2-47d3-a716-f9b85de0e885',259,NULL,NULL,0,NULL,NULL),(260,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_260','b1e2509b-e9e4-40f8-b5c3-4e230e675ca8',260,NULL,NULL,0,NULL,NULL),(261,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_261','c423ca4a-54b4-40f3-859d-d39f7d4cf266',261,NULL,NULL,0,NULL,NULL),(262,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_262','1452d005-8038-4092-ba0d-bd690dfdb2e2',262,NULL,NULL,0,NULL,NULL),(263,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_263','f39a1721-6aeb-4f1e-90be-f54684ece8f0',263,NULL,NULL,0,NULL,NULL),(264,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_264','ec2b02db-6eb2-4b9e-aa3b-ef53b6daf005',264,NULL,NULL,0,NULL,NULL),(265,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_265','a6809581-e7b7-4d70-bfdd-c1f302322ee3',265,NULL,NULL,0,NULL,NULL),(266,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_266','794e2ba9-518d-4494-8ef0-01669807e10a',266,NULL,NULL,0,NULL,NULL),(267,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_267','c258f48e-7f30-4c16-bd2d-6eed81529157',267,NULL,NULL,0,NULL,NULL),(268,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_268','b7501b84-3a14-44d7-97da-271c416cbd16',268,NULL,NULL,0,NULL,NULL),(269,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_269','88b529d5-7804-4c4d-9f35-aa7dd1df0a37',269,NULL,NULL,0,NULL,NULL),(270,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_270','0c1b65d3-dee3-4429-864f-115fbbc6a2f4',270,NULL,NULL,0,NULL,NULL),(271,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_271','01667b0f-b397-47c1-8cdb-adb3ea7cba06',271,NULL,NULL,0,NULL,NULL),(272,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_272','c8909fda-0453-4f74-a683-bd613fdc70c5',272,NULL,NULL,0,NULL,NULL),(273,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_273','796b8703-6f42-433f-b9e6-b115b4df25b0',273,NULL,NULL,0,NULL,NULL),(274,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_274','de8f11f6-7298-4633-ad38-cc94e03314fd',274,NULL,NULL,0,NULL,NULL),(275,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_275','e097f4e6-9c2d-4f35-912e-bd37f5cdec00',275,NULL,NULL,0,NULL,NULL),(276,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_276','3e0dab1e-c41f-4c0d-b2e3-d056ba6a3c60',276,NULL,NULL,0,NULL,NULL),(277,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_277','b24cb998-40b7-471c-b55a-48b58b98b2e5',277,NULL,NULL,0,NULL,NULL),(278,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_278','ab2113f4-56a2-4d1d-83a6-a54a763e371e',278,NULL,NULL,0,NULL,NULL),(279,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_279','2a2beb83-ccbf-413f-ade2-2fd2f79e5f49',279,NULL,NULL,0,NULL,NULL),(280,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_280','ac53405d-8813-4cf7-ac12-fad7629d5602',280,NULL,NULL,0,NULL,NULL),(281,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_281','b6c7b0e1-38b5-4e00-a22d-45c03d5fdeac',281,NULL,NULL,0,NULL,NULL),(282,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_282','8e41ff90-42f5-4736-89a6-24246917555c',282,NULL,NULL,0,NULL,NULL),(283,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_283','2b46023a-316f-41ae-955e-01185d67d7a5',283,NULL,NULL,0,NULL,NULL),(284,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_284','74c72c06-391e-4c72-92e7-92a5b75ac2da',284,NULL,NULL,0,NULL,NULL),(285,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_285','3e1246c2-96f9-4937-be0c-eb187822c3c7',285,NULL,NULL,0,NULL,NULL),(286,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_286','7f0e0193-b743-4394-b3e5-86e01813c094',286,NULL,NULL,0,NULL,NULL),(287,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_287','886cd06c-c30a-48df-b793-be4bfa2c1eb9',287,NULL,NULL,0,NULL,NULL),(288,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_288','cb7cf6cd-bd2e-4956-be86-5d5935417098',288,NULL,NULL,0,NULL,NULL),(289,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_289','d2e92f17-c26b-44dd-9c60-ca69b0f55b6d',289,NULL,NULL,0,NULL,NULL),(290,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_290','ea3a53a1-b451-4d7b-9b9f-2b6790de314d',290,NULL,NULL,0,NULL,NULL),(291,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_291','723f2b0d-3473-445c-a6f2-9c8bb12b6019',291,NULL,NULL,0,NULL,NULL),(292,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_292','8f04e723-bb30-4952-a8f5-214845e525dc',292,NULL,NULL,0,NULL,NULL),(293,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_293','56e1991e-47e1-4136-9bd0-cd94fa40b3c8',293,NULL,NULL,0,NULL,NULL),(294,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_294','b5ef5b82-483e-4331-ba84-78ece1f72602',294,NULL,NULL,0,NULL,NULL),(295,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_295','8238ae4e-5f13-42a3-9d6c-ea60f0ee64a1',295,NULL,NULL,0,NULL,NULL),(296,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_296','800a6a1d-1f63-4052-a14a-fcb56ab7e98b',296,NULL,NULL,0,NULL,NULL),(297,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_297','2eb884c0-8953-434d-898f-a162ffd44102',297,NULL,NULL,0,NULL,NULL),(298,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_298','06363941-bac6-4cc1-b56f-82d9d64d7c12',298,NULL,NULL,0,NULL,NULL),(299,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_299','d8468131-79a2-4003-bf0a-e034a3455af9',299,NULL,NULL,0,NULL,NULL),(300,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_300','e8e5f9d3-4473-46d9-b893-a195d5ccc6b4',300,NULL,NULL,0,NULL,NULL),(301,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_301','57db1144-49b7-4930-a214-9bba56c0eab6',301,NULL,NULL,0,NULL,NULL),(302,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_302','668a6ec5-142f-467d-891a-57fe10faf4bb',302,NULL,NULL,0,NULL,NULL),(303,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_303','9bcd9772-6c90-4c14-8ff4-16fa54744c87',303,NULL,NULL,0,NULL,NULL),(304,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_304','6c37ac4e-5213-4d60-8070-fadf3fa3ca38',304,NULL,NULL,0,NULL,NULL),(305,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_305','fb5d7ea0-249f-4a0e-97aa-caa015d148e4',305,NULL,NULL,0,NULL,NULL),(306,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_306','26035205-595c-433a-8aba-4e0d6ce103a3',306,NULL,NULL,0,NULL,NULL),(307,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_307','1e4a6346-9da9-417c-bfbf-1a3cded61e12',307,NULL,NULL,0,NULL,NULL),(308,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_308','3af98cba-0cd4-4ea1-bcdc-c4c91672f038',308,NULL,NULL,0,NULL,NULL),(309,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_309','a073f7ce-dfdc-424c-b4d0-bec7acaae445',309,NULL,NULL,0,NULL,NULL),(310,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_310','6524988e-5916-4410-a740-58d1e57d3f93',310,NULL,NULL,0,NULL,NULL),(311,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_311','58a190c4-789e-4c97-9fbb-245d3a58c8fe',311,NULL,NULL,0,NULL,NULL),(312,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_312','3244773f-b74b-461d-bf9a-916a05980c99',312,NULL,NULL,0,NULL,NULL),(313,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_313','aaed5fa8-6555-43d2-adf4-c672008f8c92',313,NULL,NULL,0,NULL,NULL),(314,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_314','f32415ac-f0fb-4815-bbef-27ba6115a1cc',314,NULL,NULL,0,NULL,NULL),(315,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_315','2030b697-b729-40c4-91b1-592e19fd4e73',315,NULL,NULL,0,NULL,NULL),(316,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_316','ee47b98e-ebd5-44ae-8c9a-cbec609415b0',316,NULL,NULL,0,NULL,NULL),(317,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_317','a47459c2-a709-4601-9151-cb57ae13bc8c',317,NULL,NULL,0,NULL,NULL),(318,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_318','5e274495-2c02-4f75-9ce2-c730e2686be9',318,NULL,NULL,0,NULL,NULL),(319,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_319','f5f04ca8-f693-4758-9aa6-9a3c55938937',319,NULL,NULL,0,NULL,NULL),(320,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_320','5f876faf-2ad7-41f3-906d-2edd9fd2907d',320,NULL,NULL,0,NULL,NULL),(321,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_321','3d0665c6-db74-4d48-91cc-ebe39bbae605',321,NULL,NULL,0,NULL,NULL),(322,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_322','86c19bce-cb25-47a4-8aba-29c8ad4fc87d',322,NULL,NULL,0,NULL,NULL),(323,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_323','efa06619-2301-4cb4-b9fa-6e9bddef94d7',323,NULL,NULL,0,NULL,NULL),(324,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_324','3cfc5976-aa7f-4281-8b43-6ea6eee1ac80',324,NULL,NULL,0,NULL,NULL),(325,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_325','19a56d56-1f57-45e6-9c2e-466a17d8c7ba',325,NULL,NULL,0,NULL,NULL),(326,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_326','026a45cf-cbeb-4ea9-8d20-21efbe206bad',326,NULL,NULL,0,NULL,NULL),(327,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_327','48312cae-f61d-4f87-9b20-a957d1e919ce',327,NULL,NULL,0,NULL,NULL),(328,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_328','e06abc58-f451-4e9e-ac4f-51d5e9d424a6',328,NULL,NULL,0,NULL,NULL),(329,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_329','10b58273-4b30-4caf-954c-a1873ca4d6b5',329,NULL,NULL,0,NULL,NULL),(330,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_330','008892b7-6479-4e68-adf2-39e7ac29e66e',330,NULL,NULL,0,NULL,NULL),(331,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_331','7f864422-153c-4681-8c9e-4e942dce9548',331,NULL,NULL,0,NULL,NULL),(332,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_332','67c5538e-0363-4650-a42e-ba25746b4239',332,NULL,NULL,0,NULL,NULL),(333,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_333','208210c1-1601-47ae-883f-cdb16e0f802b',333,NULL,NULL,0,NULL,NULL),(334,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_334','bb08395a-a0f0-490d-9d23-6f2f76b41514',334,NULL,NULL,0,NULL,NULL),(335,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_335','050c1a8e-256d-41ab-bd3a-3abe54d01b32',335,NULL,NULL,0,NULL,NULL),(336,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_336','cf016005-9207-4a2d-a8fe-91c278029a18',336,NULL,NULL,0,NULL,NULL),(337,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_337','950a5d40-e604-4f6c-82dd-2b60a578d9aa',337,NULL,NULL,0,NULL,NULL),(338,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_338','3e00662d-6917-4759-b9a9-be8eda02f63b',338,NULL,NULL,0,NULL,NULL),(339,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_339','bb339af3-2038-4f17-b489-46d4b7542cb6',339,NULL,NULL,0,NULL,NULL),(340,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_340','3927f6d5-5d90-4192-b84c-cebda90c0b0a',340,NULL,NULL,0,NULL,NULL),(341,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_341','e6b29f71-bb4a-420b-8442-1f7639109465',341,NULL,NULL,0,NULL,NULL),(342,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_342','ff7909b6-a90c-43c7-96fc-c375d439e373',342,NULL,NULL,0,NULL,NULL),(343,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_343','6f9902ca-7674-4f2f-b2e1-aeb3701bae14',343,NULL,NULL,0,NULL,NULL),(344,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_344','36d75eda-7573-474a-8aeb-f8555464154f',344,NULL,NULL,0,NULL,NULL),(345,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_345','d3c489ae-3f03-48fe-9248-927a8bb3297f',345,NULL,NULL,0,NULL,NULL),(346,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_346','18764a4e-8b01-478e-80b3-217cc37d49c7',346,NULL,NULL,0,NULL,NULL),(347,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_347','00075d1c-f486-41a0-98f8-06f0354b8416',347,NULL,NULL,0,NULL,NULL),(1000,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$12$S3lUZw/ESq9lULn5he6bBu9KNGCvs7C2rWo0XdVC6t65ITwAc22w2','test-with-mfa','467c882e-90da-11ec-b909-0242ac120002',1000,NULL,NULL,0,NULL,NULL);
+INSERT INTO `iam_account` VALUES (1,1,'2024-03-01 11:57:08','2024-03-01 11:57:08','$2a$10$TQVxBo3zIgshOJ7UU8It2e3qeIPqHWjYHFNGN329t3mMEkqqA2rnW','admin','73f16d93-2441-4a50-88ff-85360d78c6b5',1,NULL,NULL,0,'2024-03-01 11:58:59',NULL),(2,1,'2024-03-01 11:57:22','2024-03-01 12:01:02','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test','80e5fb8d-b7c8-451a-89ba-346ae278a66f',2,NULL,NULL,0,NULL,NULL),(3,1,'2024-03-01 11:57:08','2024-03-01 11:57:08','$2a$10$drR4TBVnQJBRGnYeqjIfLOaVrT2LBZWpl8QVyejXISVPn4KEuS06y','dup_email_0','bffc67b7-47fe-410c-a6a0-cf00173a8fbb',3,NULL,NULL,0,NULL,NULL),(4,1,'2024-03-01 11:57:08','2024-03-01 11:57:08','$2a$10$pGkQBgJRxXw7LDX3gLF6BeE4e0ArLAM9Pa0aYhTihsRHCfcWk3CG6','dup_email_1','0a6fa72a-fb75-4a6c-9734-bfe673df70b3',4,NULL,NULL,0,NULL,NULL),(5,1,'2024-03-01 11:57:08','2024-03-01 11:57:08','$2a$10$KCOFVQDb5j0Q4ZisPMz5wuSeT4BoZ504qMnDrQ4Ch7jLNBNdkQtcO','dup_email_2','d836e5ec-246c-456c-8476-923ee2f831c8',5,NULL,NULL,0,NULL,NULL),(100,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_100','f2ce8cb2-a1db-4884-9ef0-d8842cc02b4a',100,NULL,NULL,0,NULL,NULL),(101,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_101','1a78b3b8-22d2-4746-9269-df55aceb036f',101,NULL,NULL,0,NULL,NULL),(102,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_102','a07d60c6-7ffa-475f-98e4-f9f648aa278b',102,NULL,NULL,0,NULL,NULL),(103,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_103','56e1b885-ea25-4ffc-ba17-fcde2b097d02',103,NULL,NULL,0,NULL,NULL),(104,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_104','67d2794d-c7fb-406e-9bc1-b66f43cbe60f',104,NULL,NULL,0,NULL,NULL),(105,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_105','d11e04f7-f369-4de6-9375-394f7d886ac7',105,NULL,NULL,0,NULL,NULL),(106,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_106','bbc76b76-9f9e-443b-8c63-cd775c50c6f3',106,NULL,NULL,0,NULL,NULL),(107,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_107','b15c850c-e6e0-4afb-a02d-374653bb102e',107,NULL,NULL,0,NULL,NULL),(108,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_108','afada6e8-d50d-47f6-912e-d6261605c771',108,NULL,NULL,0,NULL,NULL),(109,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_109','fa3b4c97-4787-4b49-a32c-5b4c74d5a7c8',109,NULL,NULL,0,NULL,NULL),(110,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_110','33165df6-4d49-4728-883c-3fd42720d46b',110,NULL,NULL,0,NULL,NULL),(111,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_111','15fb8d3a-003d-4ef9-8349-867d81d4ae9c',111,NULL,NULL,0,NULL,NULL),(112,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_112','7a4dda33-c2e5-4304-998a-3fa4df481123',112,NULL,NULL,0,NULL,NULL),(113,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_113','7013f989-0a95-43b5-8637-2e2360a73bb3',113,NULL,NULL,0,NULL,NULL),(114,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_114','12caabc8-4766-4028-98ff-f4d7f288a5f0',114,NULL,NULL,0,NULL,NULL),(115,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_115','f463ad2b-5814-4877-bb62-f954c67a8044',115,NULL,NULL,0,NULL,NULL),(116,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_116','28c656c4-5489-4654-a257-0806c6bab905',116,NULL,NULL,0,NULL,NULL),(117,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_117','11be5a72-9416-45fc-a0a7-f3e23c54bfda',117,NULL,NULL,0,NULL,NULL),(118,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_118','3cea2c01-786e-41a3-8fdf-4229cc4e3742',118,NULL,NULL,0,NULL,NULL),(119,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_119','e0247677-4542-4df3-8d75-8efa11e70911',119,NULL,NULL,0,NULL,NULL),(120,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_120','d905a115-d726-4e11-ba1f-b8482177bb05',120,NULL,NULL,0,NULL,NULL),(121,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_121','3479afd1-584c-4479-b6e2-25f6cef2f842',121,NULL,NULL,0,NULL,NULL),(122,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_122','8d4f467d-cb68-4feb-b898-71e4487e6820',122,NULL,NULL,0,NULL,NULL),(123,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_123','0ddee1c2-1426-4b83-b520-e20bdd8ef9b3',123,NULL,NULL,0,NULL,NULL),(124,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_124','b8b638be-6e09-4dbe-bcc0-776c2403e8c7',124,NULL,NULL,0,NULL,NULL),(125,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_125','1dc3108a-b5c0-4e5b-accd-925054075bc4',125,NULL,NULL,0,NULL,NULL),(126,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_126','5eed3374-c131-4513-84b7-dd0ff965da35',126,NULL,NULL,0,NULL,NULL),(127,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_127','2d0b4c36-0301-49f6-a20b-23b6ca48cee2',127,NULL,NULL,0,NULL,NULL),(128,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_128','db46065a-ba62-423d-9397-7bc6fab371a5',128,NULL,NULL,0,NULL,NULL),(129,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_129','d9dbaabf-c51a-45e5-aee1-25134ba283ac',129,NULL,NULL,0,NULL,NULL),(130,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_130','5678f40a-f361-464c-aa71-ffb48d163aaa',130,NULL,NULL,0,NULL,NULL),(131,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_131','209ae3b9-e266-4e57-a639-db29f61a7594',131,NULL,NULL,0,NULL,NULL),(132,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_132','f3fac505-d5c9-4d9c-83af-3976f357f19c',132,NULL,NULL,0,NULL,NULL),(133,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_133','13bfd34b-1dda-452e-bd9a-284aabccf07d',133,NULL,NULL,0,NULL,NULL),(134,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_134','15ccd152-1537-48d4-a55a-fd6565e5d86f',134,NULL,NULL,0,NULL,NULL),(135,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_135','6b2f4fc1-3e98-4f64-8fb4-517d2d4b3fa3',135,NULL,NULL,0,NULL,NULL),(136,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_136','398081ee-9c3c-4e5d-802c-90a4579030d4',136,NULL,NULL,0,NULL,NULL),(137,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_137','89a32317-dd45-481d-91a4-080e30c1f29e',137,NULL,NULL,0,NULL,NULL),(138,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_138','6dc0aa56-011d-45b8-bf26-cb03e8b40ccf',138,NULL,NULL,0,NULL,NULL),(139,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_139','cd62277e-5acf-41af-acea-b4d208cba29e',139,NULL,NULL,0,NULL,NULL),(140,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_140','0ae29eac-64ee-45b4-a2e7-e58b34c7ff0e',140,NULL,NULL,0,NULL,NULL),(141,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_141','0f7fe907-fa84-429e-8057-02d809375ba3',141,NULL,NULL,0,NULL,NULL),(142,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_142','7aa4a733-d318-4392-b3d3-6618263f667d',142,NULL,NULL,0,NULL,NULL),(143,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_143','b1d9b1ac-e77c-4d55-a895-cf0788ed2174',143,NULL,NULL,0,NULL,NULL),(144,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_144','f975f1f7-ad05-4d66-9905-d44c13cbd08b',144,NULL,NULL,0,NULL,NULL),(145,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_145','857f6e6d-e415-4850-a82b-59d557864910',145,NULL,NULL,0,NULL,NULL),(146,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_146','4e1c059c-1d06-4997-8bfa-5bd09fdb4571',146,NULL,NULL,0,NULL,NULL),(147,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_147','f4a0bc7f-b279-4caf-b8d1-c86a3c106f62',147,NULL,NULL,0,NULL,NULL),(148,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_148','007bbb9d-55b1-4f5e-80a5-bbcb22073db4',148,NULL,NULL,0,NULL,NULL),(149,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_149','a1d22bbf-9afe-49da-b75d-b58f825db351',149,NULL,NULL,0,NULL,NULL),(150,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_150','8c2351d5-5460-4b2d-b1bb-7b086130090e',150,NULL,NULL,0,NULL,NULL),(151,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_151','e6651896-66f8-4f63-b44f-71710fdb947c',151,NULL,NULL,0,NULL,NULL),(152,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_152','caf04a3c-8f35-40a3-99b6-48ba6a05d8b8',152,NULL,NULL,0,NULL,NULL),(153,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_153','d501e485-a306-4c9d-9baf-cc75f2321cfd',153,NULL,NULL,0,NULL,NULL),(154,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_154','57466d38-cae8-48bf-ac67-2cfc0266b5b0',154,NULL,NULL,0,NULL,NULL),(155,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_155','4bd5f059-f014-4356-8083-9c1a77adb6fd',155,NULL,NULL,0,NULL,NULL),(156,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_156','69130f52-f251-46fd-99ee-d646938e5f3f',156,NULL,NULL,0,NULL,NULL),(157,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_157','dedfb4f0-a545-44b3-abba-dd77103db894',157,NULL,NULL,0,NULL,NULL),(158,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_158','b5d98a8b-3780-4ace-ace1-ac12829dc469',158,NULL,NULL,0,NULL,NULL),(159,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_159','17de2f08-37fe-469d-b7b1-0e9ea9c6d2d8',159,NULL,NULL,0,NULL,NULL),(160,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_160','313abc40-4c88-45df-89e7-bd7bbf97b0fd',160,NULL,NULL,0,NULL,NULL),(161,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_161','c5d7fc06-16fc-4711-be37-27bbf2c2c07c',161,NULL,NULL,0,NULL,NULL),(162,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_162','ca31bf4d-f5da-4fc4-ae36-fd3cc0d35d7f',162,NULL,NULL,0,NULL,NULL),(163,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_163','dc98bb8e-4b91-4915-86fb-476c9503a936',163,NULL,NULL,0,NULL,NULL),(164,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_164','79dd006c-0e4c-4a79-8600-ef8a0ae5bc04',164,NULL,NULL,0,NULL,NULL),(165,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_165','05cdc1f7-7787-43d6-80c6-588277fefb9b',165,NULL,NULL,0,NULL,NULL),(166,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_166','dcdeb139-71ab-44f5-a709-ab33fec49882',166,NULL,NULL,0,NULL,NULL),(167,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_167','35a98804-b05e-47b0-917b-d72a4d4a5240',167,NULL,NULL,0,NULL,NULL),(168,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_168','5e4d4351-82c7-438d-8f83-ee2b7ebe1fe3',168,NULL,NULL,0,NULL,NULL),(169,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_169','e1a205e2-f202-402d-8542-4cfc529ef514',169,NULL,NULL,0,NULL,NULL),(170,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_170','a2e6271e-5b30-42d1-a211-494b98832676',170,NULL,NULL,0,NULL,NULL),(171,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_171','68515954-75ea-4022-9581-4cb4d28c6d6d',171,NULL,NULL,0,NULL,NULL),(172,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_172','41663b84-06b5-4787-a49e-1f745ca1eab3',172,NULL,NULL,0,NULL,NULL),(173,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_173','b257f456-bdae-4c58-8519-756abbda462a',173,NULL,NULL,0,NULL,NULL),(174,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_174','d848b9cb-05e4-4dcf-b9b7-431d83c41810',174,NULL,NULL,0,NULL,NULL),(175,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_175','b6859250-dcca-47ef-b013-f609468d2389',175,NULL,NULL,0,NULL,NULL),(176,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_176','e18bc682-897b-4696-a5ef-eee37a52a3de',176,NULL,NULL,0,NULL,NULL),(177,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_177','6b00471d-f496-4335-8209-5a9e13d18b9e',177,NULL,NULL,0,NULL,NULL),(178,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_178','35664644-7b32-4503-86f4-76adbb57762c',178,NULL,NULL,0,NULL,NULL),(179,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_179','7890415f-6563-4f25-bdf3-a5f45159a1b1',179,NULL,NULL,0,NULL,NULL),(180,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_180','a1edf880-e270-4dac-b69f-73e61c517397',180,NULL,NULL,0,NULL,NULL),(181,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_181','73520029-5901-4022-b9da-38ccd73fe799',181,NULL,NULL,0,NULL,NULL),(182,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_182','de5825a3-c585-45b3-88a1-7e5e80686826',182,NULL,NULL,0,NULL,NULL),(183,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_183','bb50b80a-f471-4f64-85fb-4e5051708a4a',183,NULL,NULL,0,NULL,NULL),(184,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_184','b7aa98b9-30da-468c-8566-06a5b804c4b9',184,NULL,NULL,0,NULL,NULL),(185,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_185','c230e253-f874-4365-8b0e-7ba5ebc1cc26',185,NULL,NULL,0,NULL,NULL),(186,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_186','7593dbbf-9286-460b-a234-32b560817f60',186,NULL,NULL,0,NULL,NULL),(187,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_187','ee1e2ce5-da23-4576-84e3-ad7cf4e0ce26',187,NULL,NULL,0,NULL,NULL),(188,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_188','bf1cc1be-f405-4282-b7be-9a4578670046',188,NULL,NULL,0,NULL,NULL),(189,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_189','e5ed670a-f944-40f0-8c10-d41c3350ead5',189,NULL,NULL,0,NULL,NULL),(190,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_190','8370db5c-e196-451a-9f5f-9b99c570cf46',190,NULL,NULL,0,NULL,NULL),(191,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_191','81498342-d247-4a60-80de-2c4cb4b1a84d',191,NULL,NULL,0,NULL,NULL),(192,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_192','213f1b3c-516e-4a6f-9785-d8c85d32f83e',192,NULL,NULL,0,NULL,NULL),(193,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_193','08ba27e6-b1b5-4d9e-a64a-6b5bc538bf43',193,NULL,NULL,0,NULL,NULL),(194,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_194','cf0cfa8e-377c-44a0-a6d1-a74ce1de08fb',194,NULL,NULL,0,NULL,NULL),(195,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_195','2ea66412-8dc2-4081-8d48-e3637ca82604',195,NULL,NULL,0,NULL,NULL),(196,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_196','4ed466eb-ee51-4433-9d0f-3a56216698a2',196,NULL,NULL,0,NULL,NULL),(197,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_197','cc03fc51-097d-43d6-bb6c-a0df72ec4838',197,NULL,NULL,0,NULL,NULL),(198,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_198','11844e66-8146-4263-aaa6-1fde7e5cfc58',198,NULL,NULL,0,NULL,NULL),(199,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_199','b5a954c6-69a9-473c-a4c4-83c4f7a88c1c',199,NULL,NULL,0,NULL,NULL),(200,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_200','167e359e-7833-4ce2-9f8b-f035cee39505',200,NULL,NULL,0,NULL,NULL),(201,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_201','5afb5430-a023-4a50-aa92-b134a0fb68b3',201,NULL,NULL,0,NULL,NULL),(202,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_202','de17b155-307c-4f9b-81f3-7f8b73d2526a',202,NULL,NULL,0,NULL,NULL),(203,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_203','c966145b-ac05-4a2c-874d-f7b585d1d03b',203,NULL,NULL,0,NULL,NULL),(204,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_204','1d88ea5a-ab5f-40b1-bd48-f18f86eef5d9',204,NULL,NULL,0,NULL,NULL),(205,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_205','6cb0be93-7829-4bfc-ba4a-4d2cdff45447',205,NULL,NULL,0,NULL,NULL),(206,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_206','e31a2ca7-fcaa-4b98-aac9-7e78f8605851',206,NULL,NULL,0,NULL,NULL),(207,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_207','f26899b7-64e0-4c16-9134-cef3774f1614',207,NULL,NULL,0,NULL,NULL),(208,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_208','606cf6ab-6b5e-45d1-83b8-e535b197d2f0',208,NULL,NULL,0,NULL,NULL),(209,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_209','617bfc4e-17b1-4ca7-b736-58a74c267747',209,NULL,NULL,0,NULL,NULL),(210,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_210','e5c26b7a-17bd-47ce-aac8-1430c57b8152',210,NULL,NULL,0,NULL,NULL),(211,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_211','7747bff5-b1e5-49b9-9a87-f93a5b790df0',211,NULL,NULL,0,NULL,NULL),(212,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_212','c6e5b631-1e91-4ecd-8358-214eec07a91d',212,NULL,NULL,0,NULL,NULL),(213,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_213','a874c7bd-97ac-4f48-bda5-7d3305d9067d',213,NULL,NULL,0,NULL,NULL),(214,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_214','c7938cc2-8032-424b-8f49-85558f95364b',214,NULL,NULL,0,NULL,NULL),(215,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_215','46017ce9-d4dd-4ddc-8b73-d596e23d25ad',215,NULL,NULL,0,NULL,NULL),(216,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_216','d5e66fd2-232e-476d-8de0-2bc1eb59630d',216,NULL,NULL,0,NULL,NULL),(217,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_217','097dc614-bc56-4f5f-a190-3ca1716a6400',217,NULL,NULL,0,NULL,NULL),(218,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_218','a3b97132-067f-4839-9b99-830a7fb659d4',218,NULL,NULL,0,NULL,NULL),(219,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_219','8d35557f-7451-4c54-bb17-9c3d204c48d3',219,NULL,NULL,0,NULL,NULL),(220,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_220','a6fba1ff-a5d7-4907-8cd4-1caa27cad85d',220,NULL,NULL,0,NULL,NULL),(221,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_221','427feb36-4401-4971-83de-f93672c028aa',221,NULL,NULL,0,NULL,NULL),(222,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_222','66541083-b1ab-4966-9f8b-8a1109fce0e0',222,NULL,NULL,0,NULL,NULL),(223,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_223','9939c37c-a9b9-43b7-9a4b-aacc470d47c4',223,NULL,NULL,0,NULL,NULL),(224,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_224','754379a0-bdc2-4a2d-9828-9480926b30ad',224,NULL,NULL,0,NULL,NULL),(225,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_225','18c870a1-9e2c-48fb-8a52-259e55e2052e',225,NULL,NULL,0,NULL,NULL),(226,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_226','02df9a97-b44c-4c46-ab3a-c11010d45e18',226,NULL,NULL,0,NULL,NULL),(227,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_227','20f609f7-c128-46b5-abeb-d16d46aab9ad',227,NULL,NULL,0,NULL,NULL),(228,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_228','75067ca5-872c-4149-85ad-f6685f14efc0',228,NULL,NULL,0,NULL,NULL),(229,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_229','b8639303-d15f-4c81-b9d2-2863f53737c3',229,NULL,NULL,0,NULL,NULL),(230,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_230','a0c4d9ea-7659-4009-ac7c-a3f089def76d',230,NULL,NULL,0,NULL,NULL),(231,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_231','d3605113-fb9a-4640-b6fe-9931594eba6c',231,NULL,NULL,0,NULL,NULL),(232,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_232','bf59d2cc-dd79-4ad6-9637-b04098768600',232,NULL,NULL,0,NULL,NULL),(233,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_233','304d5f24-274e-4fd6-aca4-97b761d1bd0c',233,NULL,NULL,0,NULL,NULL),(234,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_234','0d9491c3-c28b-4c11-8e28-14d93e612e35',234,NULL,NULL,0,NULL,NULL),(235,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_235','f73a809f-78a6-4214-8060-d6037fe391aa',235,NULL,NULL,0,NULL,NULL),(236,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_236','11cc494a-86a4-44d2-b5fd-06438f95d6a4',236,NULL,NULL,0,NULL,NULL),(237,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_237','55b2e8cc-aaa4-4a8b-8a83-f732188cfab2',237,NULL,NULL,0,NULL,NULL),(238,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_238','ebe14f0a-7bf7-4614-83c8-1e2da963139a',238,NULL,NULL,0,NULL,NULL),(239,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_239','3e83b092-95a1-4ee4-ac1f-e9df2f3954ad',239,NULL,NULL,0,NULL,NULL),(240,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_240','7304efcc-7974-453e-b2db-fdcc848f8a24',240,NULL,NULL,0,NULL,NULL),(241,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_241','6b0b51e8-f058-42a6-a9ed-3b6ebde935d8',241,NULL,NULL,0,NULL,NULL),(242,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_242','c10f6de1-a64d-4f8f-bd0a-47bcd72ab8f7',242,NULL,NULL,0,NULL,NULL),(243,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_243','5537408c-41c6-4ee5-8f59-ca70fcdbd0ae',243,NULL,NULL,0,NULL,NULL),(244,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_244','0a920520-e271-42a6-8dc1-89f090023c89',244,NULL,NULL,0,NULL,NULL),(245,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_245','a5120b27-cdd5-4209-b3da-bdf4b53db140',245,NULL,NULL,0,NULL,NULL),(246,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_246','cd0f900a-dab8-4a49-805d-97e57cb5ad4c',246,NULL,NULL,0,NULL,NULL),(247,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_247','53b8b68c-0a11-411a-9b4d-01d58c9c0ff0',247,NULL,NULL,0,NULL,NULL),(248,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_248','57114ddf-7bb8-4e68-952a-faa83bf276bf',248,NULL,NULL,0,NULL,NULL),(249,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_249','fa04c6fe-1bf0-489e-b0df-9fa4756bb90b',249,NULL,NULL,0,NULL,NULL),(250,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_250','5bf5b365-962e-4f6d-9576-94d5ac66cc3c',250,NULL,NULL,0,NULL,NULL),(251,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_251','eca96575-798c-4919-ba93-4f0eca487490',251,NULL,NULL,0,NULL,NULL),(252,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_252','d4e52ad1-ac1c-4f68-8d97-6858c8534f84',252,NULL,NULL,0,NULL,NULL),(253,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_253','74f88528-b57b-4482-a417-e7e8cf5ccd87',253,NULL,NULL,0,NULL,NULL),(254,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_254','f1b969bd-2e43-4981-80d1-baeba6afd456',254,NULL,NULL,0,NULL,NULL),(255,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_255','11f5bcd3-096b-4b0f-8f1b-fa9292e3f5f3',255,NULL,NULL,0,NULL,NULL),(256,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_256','b937e637-c00b-48de-8dd4-fae260cd9fb9',256,NULL,NULL,0,NULL,NULL),(257,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_257','49886ca5-c9a8-4c1f-9ef0-4784495e943c',257,NULL,NULL,0,NULL,NULL),(258,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_258','5cf6bbba-f2bf-4704-b288-36edb49a3c7a',258,NULL,NULL,0,NULL,NULL),(259,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_259','0a246675-78f2-47d3-a716-f9b85de0e885',259,NULL,NULL,0,NULL,NULL),(260,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_260','b1e2509b-e9e4-40f8-b5c3-4e230e675ca8',260,NULL,NULL,0,NULL,NULL),(261,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_261','c423ca4a-54b4-40f3-859d-d39f7d4cf266',261,NULL,NULL,0,NULL,NULL),(262,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_262','1452d005-8038-4092-ba0d-bd690dfdb2e2',262,NULL,NULL,0,NULL,NULL),(263,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_263','f39a1721-6aeb-4f1e-90be-f54684ece8f0',263,NULL,NULL,0,NULL,NULL),(264,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_264','ec2b02db-6eb2-4b9e-aa3b-ef53b6daf005',264,NULL,NULL,0,NULL,NULL),(265,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_265','a6809581-e7b7-4d70-bfdd-c1f302322ee3',265,NULL,NULL,0,NULL,NULL),(266,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_266','794e2ba9-518d-4494-8ef0-01669807e10a',266,NULL,NULL,0,NULL,NULL),(267,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_267','c258f48e-7f30-4c16-bd2d-6eed81529157',267,NULL,NULL,0,NULL,NULL),(268,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_268','b7501b84-3a14-44d7-97da-271c416cbd16',268,NULL,NULL,0,NULL,NULL),(269,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_269','88b529d5-7804-4c4d-9f35-aa7dd1df0a37',269,NULL,NULL,0,NULL,NULL),(270,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_270','0c1b65d3-dee3-4429-864f-115fbbc6a2f4',270,NULL,NULL,0,NULL,NULL),(271,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_271','01667b0f-b397-47c1-8cdb-adb3ea7cba06',271,NULL,NULL,0,NULL,NULL),(272,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_272','c8909fda-0453-4f74-a683-bd613fdc70c5',272,NULL,NULL,0,NULL,NULL),(273,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_273','796b8703-6f42-433f-b9e6-b115b4df25b0',273,NULL,NULL,0,NULL,NULL),(274,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_274','de8f11f6-7298-4633-ad38-cc94e03314fd',274,NULL,NULL,0,NULL,NULL),(275,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_275','e097f4e6-9c2d-4f35-912e-bd37f5cdec00',275,NULL,NULL,0,NULL,NULL),(276,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_276','3e0dab1e-c41f-4c0d-b2e3-d056ba6a3c60',276,NULL,NULL,0,NULL,NULL),(277,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_277','b24cb998-40b7-471c-b55a-48b58b98b2e5',277,NULL,NULL,0,NULL,NULL),(278,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_278','ab2113f4-56a2-4d1d-83a6-a54a763e371e',278,NULL,NULL,0,NULL,NULL),(279,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_279','2a2beb83-ccbf-413f-ade2-2fd2f79e5f49',279,NULL,NULL,0,NULL,NULL),(280,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_280','ac53405d-8813-4cf7-ac12-fad7629d5602',280,NULL,NULL,0,NULL,NULL),(281,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_281','b6c7b0e1-38b5-4e00-a22d-45c03d5fdeac',281,NULL,NULL,0,NULL,NULL),(282,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_282','8e41ff90-42f5-4736-89a6-24246917555c',282,NULL,NULL,0,NULL,NULL),(283,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_283','2b46023a-316f-41ae-955e-01185d67d7a5',283,NULL,NULL,0,NULL,NULL),(284,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_284','74c72c06-391e-4c72-92e7-92a5b75ac2da',284,NULL,NULL,0,NULL,NULL),(285,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_285','3e1246c2-96f9-4937-be0c-eb187822c3c7',285,NULL,NULL,0,NULL,NULL),(286,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_286','7f0e0193-b743-4394-b3e5-86e01813c094',286,NULL,NULL,0,NULL,NULL),(287,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_287','886cd06c-c30a-48df-b793-be4bfa2c1eb9',287,NULL,NULL,0,NULL,NULL),(288,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_288','cb7cf6cd-bd2e-4956-be86-5d5935417098',288,NULL,NULL,0,NULL,NULL),(289,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_289','d2e92f17-c26b-44dd-9c60-ca69b0f55b6d',289,NULL,NULL,0,NULL,NULL),(290,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_290','ea3a53a1-b451-4d7b-9b9f-2b6790de314d',290,NULL,NULL,0,NULL,NULL),(291,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_291','723f2b0d-3473-445c-a6f2-9c8bb12b6019',291,NULL,NULL,0,NULL,NULL),(292,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_292','8f04e723-bb30-4952-a8f5-214845e525dc',292,NULL,NULL,0,NULL,NULL),(293,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_293','56e1991e-47e1-4136-9bd0-cd94fa40b3c8',293,NULL,NULL,0,NULL,NULL),(294,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_294','b5ef5b82-483e-4331-ba84-78ece1f72602',294,NULL,NULL,0,NULL,NULL),(295,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_295','8238ae4e-5f13-42a3-9d6c-ea60f0ee64a1',295,NULL,NULL,0,NULL,NULL),(296,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_296','800a6a1d-1f63-4052-a14a-fcb56ab7e98b',296,NULL,NULL,0,NULL,NULL),(297,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_297','2eb884c0-8953-434d-898f-a162ffd44102',297,NULL,NULL,0,NULL,NULL),(298,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_298','06363941-bac6-4cc1-b56f-82d9d64d7c12',298,NULL,NULL,0,NULL,NULL),(299,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_299','d8468131-79a2-4003-bf0a-e034a3455af9',299,NULL,NULL,0,NULL,NULL),(300,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_300','e8e5f9d3-4473-46d9-b893-a195d5ccc6b4',300,NULL,NULL,0,NULL,NULL),(301,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_301','57db1144-49b7-4930-a214-9bba56c0eab6',301,NULL,NULL,0,NULL,NULL),(302,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_302','668a6ec5-142f-467d-891a-57fe10faf4bb',302,NULL,NULL,0,NULL,NULL),(303,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_303','9bcd9772-6c90-4c14-8ff4-16fa54744c87',303,NULL,NULL,0,NULL,NULL),(304,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_304','6c37ac4e-5213-4d60-8070-fadf3fa3ca38',304,NULL,NULL,0,NULL,NULL),(305,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_305','fb5d7ea0-249f-4a0e-97aa-caa015d148e4',305,NULL,NULL,0,NULL,NULL),(306,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_306','26035205-595c-433a-8aba-4e0d6ce103a3',306,NULL,NULL,0,NULL,NULL),(307,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_307','1e4a6346-9da9-417c-bfbf-1a3cded61e12',307,NULL,NULL,0,NULL,NULL),(308,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_308','3af98cba-0cd4-4ea1-bcdc-c4c91672f038',308,NULL,NULL,0,NULL,NULL),(309,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_309','a073f7ce-dfdc-424c-b4d0-bec7acaae445',309,NULL,NULL,0,NULL,NULL),(310,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_310','6524988e-5916-4410-a740-58d1e57d3f93',310,NULL,NULL,0,NULL,NULL),(311,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_311','58a190c4-789e-4c97-9fbb-245d3a58c8fe',311,NULL,NULL,0,NULL,NULL),(312,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_312','3244773f-b74b-461d-bf9a-916a05980c99',312,NULL,NULL,0,NULL,NULL),(313,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_313','aaed5fa8-6555-43d2-adf4-c672008f8c92',313,NULL,NULL,0,NULL,NULL),(314,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_314','f32415ac-f0fb-4815-bbef-27ba6115a1cc',314,NULL,NULL,0,NULL,NULL),(315,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_315','2030b697-b729-40c4-91b1-592e19fd4e73',315,NULL,NULL,0,NULL,NULL),(316,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_316','ee47b98e-ebd5-44ae-8c9a-cbec609415b0',316,NULL,NULL,0,NULL,NULL),(317,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_317','a47459c2-a709-4601-9151-cb57ae13bc8c',317,NULL,NULL,0,NULL,NULL),(318,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_318','5e274495-2c02-4f75-9ce2-c730e2686be9',318,NULL,NULL,0,NULL,NULL),(319,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_319','f5f04ca8-f693-4758-9aa6-9a3c55938937',319,NULL,NULL,0,NULL,NULL),(320,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_320','5f876faf-2ad7-41f3-906d-2edd9fd2907d',320,NULL,NULL,0,NULL,NULL),(321,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_321','3d0665c6-db74-4d48-91cc-ebe39bbae605',321,NULL,NULL,0,NULL,NULL),(322,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_322','86c19bce-cb25-47a4-8aba-29c8ad4fc87d',322,NULL,NULL,0,NULL,NULL),(323,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_323','efa06619-2301-4cb4-b9fa-6e9bddef94d7',323,NULL,NULL,0,NULL,NULL),(324,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_324','3cfc5976-aa7f-4281-8b43-6ea6eee1ac80',324,NULL,NULL,0,NULL,NULL),(325,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_325','19a56d56-1f57-45e6-9c2e-466a17d8c7ba',325,NULL,NULL,0,NULL,NULL),(326,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_326','026a45cf-cbeb-4ea9-8d20-21efbe206bad',326,NULL,NULL,0,NULL,NULL),(327,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_327','48312cae-f61d-4f87-9b20-a957d1e919ce',327,NULL,NULL,0,NULL,NULL),(328,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_328','e06abc58-f451-4e9e-ac4f-51d5e9d424a6',328,NULL,NULL,0,NULL,NULL),(329,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_329','10b58273-4b30-4caf-954c-a1873ca4d6b5',329,NULL,NULL,0,NULL,NULL),(330,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_330','008892b7-6479-4e68-adf2-39e7ac29e66e',330,NULL,NULL,0,NULL,NULL),(331,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_331','7f864422-153c-4681-8c9e-4e942dce9548',331,NULL,NULL,0,NULL,NULL),(332,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_332','67c5538e-0363-4650-a42e-ba25746b4239',332,NULL,NULL,0,NULL,NULL),(333,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_333','208210c1-1601-47ae-883f-cdb16e0f802b',333,NULL,NULL,0,NULL,NULL),(334,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_334','bb08395a-a0f0-490d-9d23-6f2f76b41514',334,NULL,NULL,0,NULL,NULL),(335,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_335','050c1a8e-256d-41ab-bd3a-3abe54d01b32',335,NULL,NULL,0,NULL,NULL),(336,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_336','cf016005-9207-4a2d-a8fe-91c278029a18',336,NULL,NULL,0,NULL,NULL),(337,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_337','950a5d40-e604-4f6c-82dd-2b60a578d9aa',337,NULL,NULL,0,NULL,NULL),(338,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_338','3e00662d-6917-4759-b9a9-be8eda02f63b',338,NULL,NULL,0,NULL,NULL),(339,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_339','bb339af3-2038-4f17-b489-46d4b7542cb6',339,NULL,NULL,0,NULL,NULL),(340,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_340','3927f6d5-5d90-4192-b84c-cebda90c0b0a',340,NULL,NULL,0,NULL,NULL),(341,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_341','e6b29f71-bb4a-420b-8442-1f7639109465',341,NULL,NULL,0,NULL,NULL),(342,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_342','ff7909b6-a90c-43c7-96fc-c375d439e373',342,NULL,NULL,0,NULL,NULL),(343,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_343','6f9902ca-7674-4f2f-b2e1-aeb3701bae14',343,NULL,NULL,0,NULL,NULL),(344,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_344','36d75eda-7573-474a-8aeb-f8555464154f',344,NULL,NULL,0,NULL,NULL),(345,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_345','d3c489ae-3f03-48fe-9248-927a8bb3297f',345,NULL,NULL,0,NULL,NULL),(346,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_346','18764a4e-8b01-478e-80b3-217cc37d49c7',346,NULL,NULL,0,NULL,NULL),(347,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$10$UZeOZKD1.dj5oiTsZKD03OETA9FXCKGqBuuijhsxYygZpOPtWMUni','test_347','00075d1c-f486-41a0-98f8-06f0354b8416',347,NULL,NULL,0,NULL,NULL),(1000,1,'2024-03-01 11:57:22','2024-03-01 11:57:22','$2a$12$S3lUZw/ESq9lULn5he6bBu9KNGCvs7C2rWo0XdVC6t65ITwAc22w2','test-with-mfa','467c882e-90da-11ec-b909-0242ac120002',1000,NULL,NULL,0,NULL,NULL);
 /*!40000 ALTER TABLE `iam_account` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -978,7 +951,7 @@ DROP TABLE IF EXISTS `iam_account_attrs`;
 CREATE TABLE `iam_account_attrs` (
   `NAME` varchar(64) NOT NULL,
   `val` varchar(256) DEFAULT NULL,
-  `account_id` bigint DEFAULT NULL,
+  `account_id` bigint(20) DEFAULT NULL,
   KEY `INDEX_iam_account_attrs_name` (`NAME`),
   KEY `INDEX_iam_account_attrs_name_val` (`NAME`,`val`),
   KEY `FK_iam_account_attrs_account_id` (`account_id`),
@@ -1003,8 +976,8 @@ DROP TABLE IF EXISTS `iam_account_authority`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_account_authority` (
-  `account_id` bigint NOT NULL,
-  `authority_id` bigint NOT NULL,
+  `account_id` bigint(20) NOT NULL,
+  `authority_id` bigint(20) NOT NULL,
   PRIMARY KEY (`account_id`,`authority_id`),
   KEY `FK_iam_account_authority_authority_id` (`authority_id`),
   CONSTRAINT `FK_iam_account_authority_account_id` FOREIGN KEY (`account_id`) REFERENCES `iam_account` (`ID`),
@@ -1030,10 +1003,10 @@ DROP TABLE IF EXISTS `iam_account_client`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_account_client` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `creation_time` datetime NOT NULL,
-  `account_id` bigint NOT NULL,
-  `client_id` bigint NOT NULL,
+  `account_id` bigint(20) NOT NULL,
+  `client_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNQ_iam_account_client_0` (`account_id`,`client_id`),
   KEY `FK_iam_account_client_client_id` (`client_id`),
@@ -1060,8 +1033,8 @@ DROP TABLE IF EXISTS `iam_account_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_account_group` (
-  `account_id` bigint NOT NULL,
-  `group_id` bigint NOT NULL,
+  `account_id` bigint(20) NOT NULL,
+  `group_id` bigint(20) NOT NULL,
   `creation_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
   PRIMARY KEY (`account_id`,`group_id`),
@@ -1077,7 +1050,7 @@ CREATE TABLE `iam_account_group` (
 
 LOCK TABLES `iam_account_group` WRITE;
 /*!40000 ALTER TABLE `iam_account_group` DISABLE KEYS */;
-INSERT INTO `iam_account_group` VALUES (2,1,NULL,NULL),(2,2,NULL,NULL),(2,121,'2024-03-01 11:59:50',NULL),(2,122,'2025-05-03 04:53:07',NULL),(2,123,'2025-05-03 04:53:07',NULL),(100,1,NULL,NULL),(100,2,NULL,NULL),(101,1,NULL,NULL),(101,2,NULL,NULL),(102,1,NULL,NULL),(102,2,NULL,NULL),(103,1,NULL,NULL),(103,2,NULL,NULL),(104,1,NULL,NULL),(104,2,NULL,NULL),(105,1,NULL,NULL),(105,2,NULL,NULL),(106,1,NULL,NULL),(106,2,NULL,NULL),(107,1,NULL,NULL),(107,2,NULL,NULL),(108,1,NULL,NULL),(108,2,NULL,NULL),(109,1,NULL,NULL),(109,2,NULL,NULL),(110,1,NULL,NULL),(110,2,NULL,NULL),(111,1,NULL,NULL),(111,2,NULL,NULL),(112,1,NULL,NULL),(112,2,NULL,NULL),(113,1,NULL,NULL),(113,2,NULL,NULL),(114,1,NULL,NULL),(114,2,NULL,NULL),(115,1,NULL,NULL),(115,2,NULL,NULL),(116,1,NULL,NULL),(116,2,NULL,NULL),(117,1,NULL,NULL),(117,2,NULL,NULL),(118,1,NULL,NULL),(118,2,NULL,NULL),(119,1,NULL,NULL),(119,2,NULL,NULL),(120,1,NULL,NULL),(120,2,NULL,NULL),(121,1,NULL,NULL),(121,2,NULL,NULL),(122,1,NULL,NULL),(122,2,NULL,NULL),(123,1,NULL,NULL),(123,2,NULL,NULL),(124,1,NULL,NULL),(124,2,NULL,NULL),(125,1,NULL,NULL),(125,2,NULL,NULL),(126,1,NULL,NULL),(126,2,NULL,NULL),(127,1,NULL,NULL),(127,2,NULL,NULL),(128,1,NULL,NULL),(128,2,NULL,NULL),(129,1,NULL,NULL),(129,2,NULL,NULL),(130,1,NULL,NULL),(130,2,NULL,NULL),(131,1,NULL,NULL),(131,2,NULL,NULL),(132,1,NULL,NULL),(132,2,NULL,NULL),(133,1,NULL,NULL),(133,2,NULL,NULL),(134,1,NULL,NULL),(134,2,NULL,NULL),(135,1,NULL,NULL),(135,2,NULL,NULL),(136,1,NULL,NULL),(136,2,NULL,NULL),(137,1,NULL,NULL),(137,2,NULL,NULL),(138,1,NULL,NULL),(138,2,NULL,NULL),(139,1,NULL,NULL),(139,2,NULL,NULL),(140,1,NULL,NULL),(140,2,NULL,NULL),(141,1,NULL,NULL),(141,2,NULL,NULL),(142,1,NULL,NULL),(142,2,NULL,NULL),(143,1,NULL,NULL),(143,2,NULL,NULL),(144,1,NULL,NULL),(144,2,NULL,NULL),(145,1,NULL,NULL),(145,2,NULL,NULL),(146,1,NULL,NULL),(146,2,NULL,NULL),(147,1,NULL,NULL),(147,2,NULL,NULL),(148,1,NULL,NULL),(148,2,NULL,NULL),(149,1,NULL,NULL),(149,2,NULL,NULL),(150,1,NULL,NULL),(150,2,NULL,NULL),(151,1,NULL,NULL),(151,2,NULL,NULL),(152,1,NULL,NULL),(152,2,NULL,NULL),(153,1,NULL,NULL),(153,2,NULL,NULL),(154,1,NULL,NULL),(154,2,NULL,NULL),(155,1,NULL,NULL),(155,2,NULL,NULL),(156,1,NULL,NULL),(156,2,NULL,NULL),(157,1,NULL,NULL),(157,2,NULL,NULL),(158,1,NULL,NULL),(158,2,NULL,NULL),(159,1,NULL,NULL),(159,2,NULL,NULL),(160,1,NULL,NULL),(160,2,NULL,NULL),(161,1,NULL,NULL),(161,2,NULL,NULL),(162,1,NULL,NULL),(162,2,NULL,NULL),(163,1,NULL,NULL),(163,2,NULL,NULL),(164,1,NULL,NULL),(164,2,NULL,NULL),(165,1,NULL,NULL),(165,2,NULL,NULL),(166,1,NULL,NULL),(166,2,NULL,NULL),(167,1,NULL,NULL),(167,2,NULL,NULL),(168,1,NULL,NULL),(168,2,NULL,NULL),(169,1,NULL,NULL),(169,2,NULL,NULL),(170,1,NULL,NULL),(170,2,NULL,NULL),(171,1,NULL,NULL),(171,2,NULL,NULL),(172,1,NULL,NULL),(172,2,NULL,NULL),(173,1,NULL,NULL),(173,2,NULL,NULL),(174,1,NULL,NULL),(174,2,NULL,NULL),(175,1,NULL,NULL),(175,2,NULL,NULL),(176,1,NULL,NULL),(176,2,NULL,NULL),(177,1,NULL,NULL),(177,2,NULL,NULL),(178,1,NULL,NULL),(178,2,NULL,NULL),(179,1,NULL,NULL),(179,2,NULL,NULL),(180,1,NULL,NULL),(180,2,NULL,NULL),(181,1,NULL,NULL),(181,2,NULL,NULL),(182,1,NULL,NULL),(182,2,NULL,NULL),(183,1,NULL,NULL),(183,2,NULL,NULL),(184,1,NULL,NULL),(184,2,NULL,NULL),(185,1,NULL,NULL),(185,2,NULL,NULL),(186,1,NULL,NULL),(186,2,NULL,NULL),(187,1,NULL,NULL),(187,2,NULL,NULL),(188,1,NULL,NULL),(188,2,NULL,NULL),(189,1,NULL,NULL),(189,2,NULL,NULL),(190,1,NULL,NULL),(190,2,NULL,NULL),(191,1,NULL,NULL),(191,2,NULL,NULL),(192,1,NULL,NULL),(192,2,NULL,NULL),(193,1,NULL,NULL),(193,2,NULL,NULL),(194,1,NULL,NULL),(194,2,NULL,NULL),(195,1,NULL,NULL),(195,2,NULL,NULL),(196,1,NULL,NULL),(196,2,NULL,NULL),(197,1,NULL,NULL),(197,2,NULL,NULL),(198,1,NULL,NULL),(198,2,NULL,NULL),(199,1,NULL,NULL),(199,2,NULL,NULL),(200,1,NULL,NULL),(200,2,NULL,NULL),(201,1,NULL,NULL),(201,2,NULL,NULL),(202,1,NULL,NULL),(202,2,NULL,NULL),(203,1,NULL,NULL),(203,2,NULL,NULL),(204,1,NULL,NULL),(204,2,NULL,NULL),(205,1,NULL,NULL),(205,2,NULL,NULL),(206,1,NULL,NULL),(206,2,NULL,NULL),(207,1,NULL,NULL),(207,2,NULL,NULL),(208,1,NULL,NULL),(208,2,NULL,NULL),(209,1,NULL,NULL),(209,2,NULL,NULL),(210,1,NULL,NULL),(210,2,NULL,NULL),(211,1,NULL,NULL),(211,2,NULL,NULL),(212,1,NULL,NULL),(212,2,NULL,NULL),(213,1,NULL,NULL),(213,2,NULL,NULL),(214,1,NULL,NULL),(214,2,NULL,NULL),(215,1,NULL,NULL),(215,2,NULL,NULL),(216,1,NULL,NULL),(216,2,NULL,NULL),(217,1,NULL,NULL),(217,2,NULL,NULL),(218,1,NULL,NULL),(218,2,NULL,NULL),(219,1,NULL,NULL),(219,2,NULL,NULL),(220,1,NULL,NULL),(220,2,NULL,NULL),(221,1,NULL,NULL),(221,2,NULL,NULL),(222,1,NULL,NULL),(222,2,NULL,NULL),(223,1,NULL,NULL),(223,2,NULL,NULL),(224,1,NULL,NULL),(224,2,NULL,NULL),(225,1,NULL,NULL),(225,2,NULL,NULL),(226,1,NULL,NULL),(226,2,NULL,NULL),(227,1,NULL,NULL),(227,2,NULL,NULL),(228,1,NULL,NULL),(228,2,NULL,NULL),(229,1,NULL,NULL),(229,2,NULL,NULL),(230,1,NULL,NULL),(230,2,NULL,NULL),(231,1,NULL,NULL),(231,2,NULL,NULL),(232,1,NULL,NULL),(232,2,NULL,NULL),(233,1,NULL,NULL),(233,2,NULL,NULL),(234,1,NULL,NULL),(234,2,NULL,NULL),(235,1,NULL,NULL),(235,2,NULL,NULL),(236,1,NULL,NULL),(236,2,NULL,NULL),(237,1,NULL,NULL),(237,2,NULL,NULL),(238,1,NULL,NULL),(238,2,NULL,NULL),(239,1,NULL,NULL),(239,2,NULL,NULL),(240,1,NULL,NULL),(240,2,NULL,NULL),(241,1,NULL,NULL),(241,2,NULL,NULL),(242,1,NULL,NULL),(242,2,NULL,NULL),(243,1,NULL,NULL),(243,2,NULL,NULL),(244,1,NULL,NULL),(244,2,NULL,NULL),(245,1,NULL,NULL),(245,2,NULL,NULL),(246,1,NULL,NULL),(246,2,NULL,NULL),(247,1,NULL,NULL),(247,2,NULL,NULL),(248,1,NULL,NULL),(248,2,NULL,NULL),(249,1,NULL,NULL),(249,2,NULL,NULL),(250,1,NULL,NULL),(250,2,NULL,NULL),(251,1,NULL,NULL),(251,2,NULL,NULL),(252,1,NULL,NULL),(252,2,NULL,NULL),(253,1,NULL,NULL),(253,2,NULL,NULL),(254,1,NULL,NULL),(254,2,NULL,NULL),(255,1,NULL,NULL),(255,2,NULL,NULL),(256,1,NULL,NULL),(256,2,NULL,NULL),(257,1,NULL,NULL),(257,2,NULL,NULL),(258,1,NULL,NULL),(258,2,NULL,NULL),(259,1,NULL,NULL),(259,2,NULL,NULL),(260,1,NULL,NULL),(260,2,NULL,NULL),(261,1,NULL,NULL),(261,2,NULL,NULL),(262,1,NULL,NULL),(262,2,NULL,NULL),(263,1,NULL,NULL),(263,2,NULL,NULL),(264,1,NULL,NULL),(264,2,NULL,NULL),(265,1,NULL,NULL),(265,2,NULL,NULL),(266,1,NULL,NULL),(266,2,NULL,NULL),(267,1,NULL,NULL),(267,2,NULL,NULL),(268,1,NULL,NULL),(268,2,NULL,NULL),(269,1,NULL,NULL),(269,2,NULL,NULL),(270,1,NULL,NULL),(270,2,NULL,NULL),(271,1,NULL,NULL),(271,2,NULL,NULL),(272,1,NULL,NULL),(272,2,NULL,NULL),(273,1,NULL,NULL),(273,2,NULL,NULL),(274,1,NULL,NULL),(274,2,NULL,NULL),(275,1,NULL,NULL),(275,2,NULL,NULL),(276,1,NULL,NULL),(276,2,NULL,NULL),(277,1,NULL,NULL),(277,2,NULL,NULL),(278,1,NULL,NULL),(278,2,NULL,NULL),(279,1,NULL,NULL),(279,2,NULL,NULL),(280,1,NULL,NULL),(280,2,NULL,NULL),(281,1,NULL,NULL),(281,2,NULL,NULL),(282,1,NULL,NULL),(282,2,NULL,NULL),(283,1,NULL,NULL),(283,2,NULL,NULL),(284,1,NULL,NULL),(284,2,NULL,NULL),(285,1,NULL,NULL),(285,2,NULL,NULL),(286,1,NULL,NULL),(286,2,NULL,NULL),(287,1,NULL,NULL),(287,2,NULL,NULL),(288,1,NULL,NULL),(288,2,NULL,NULL),(289,1,NULL,NULL),(289,2,NULL,NULL),(290,1,NULL,NULL),(290,2,NULL,NULL),(291,1,NULL,NULL),(291,2,NULL,NULL),(292,1,NULL,NULL),(292,2,NULL,NULL),(293,1,NULL,NULL),(293,2,NULL,NULL),(294,1,NULL,NULL),(294,2,NULL,NULL),(295,1,NULL,NULL),(295,2,NULL,NULL),(296,1,NULL,NULL),(296,2,NULL,NULL),(297,1,NULL,NULL),(297,2,NULL,NULL),(298,1,NULL,NULL),(298,2,NULL,NULL),(299,1,NULL,NULL),(299,2,NULL,NULL),(300,1,NULL,NULL),(300,2,NULL,NULL),(301,1,NULL,NULL),(301,2,NULL,NULL),(302,1,NULL,NULL),(302,2,NULL,NULL),(303,1,NULL,NULL),(303,2,NULL,NULL),(304,1,NULL,NULL),(304,2,NULL,NULL),(305,1,NULL,NULL),(305,2,NULL,NULL),(306,1,NULL,NULL),(306,2,NULL,NULL),(307,1,NULL,NULL),(307,2,NULL,NULL),(308,1,NULL,NULL),(308,2,NULL,NULL),(309,1,NULL,NULL),(309,2,NULL,NULL),(310,1,NULL,NULL),(310,2,NULL,NULL),(311,1,NULL,NULL),(311,2,NULL,NULL),(312,1,NULL,NULL),(312,2,NULL,NULL),(313,1,NULL,NULL),(313,2,NULL,NULL),(314,1,NULL,NULL),(314,2,NULL,NULL),(315,1,NULL,NULL),(315,2,NULL,NULL),(316,1,NULL,NULL),(316,2,NULL,NULL),(317,1,NULL,NULL),(317,2,NULL,NULL),(318,1,NULL,NULL),(318,2,NULL,NULL),(319,1,NULL,NULL),(319,2,NULL,NULL),(320,1,NULL,NULL),(320,2,NULL,NULL),(321,1,NULL,NULL),(321,2,NULL,NULL),(322,1,NULL,NULL),(322,2,NULL,NULL),(323,1,NULL,NULL),(323,2,NULL,NULL),(324,1,NULL,NULL),(324,2,NULL,NULL),(325,1,NULL,NULL),(325,2,NULL,NULL),(326,1,NULL,NULL),(326,2,NULL,NULL),(327,1,NULL,NULL),(327,2,NULL,NULL),(328,1,NULL,NULL),(328,2,NULL,NULL),(329,1,NULL,NULL),(329,2,NULL,NULL),(330,1,NULL,NULL),(330,2,NULL,NULL),(331,1,NULL,NULL),(331,2,NULL,NULL),(332,1,NULL,NULL),(332,2,NULL,NULL),(333,1,NULL,NULL),(333,2,NULL,NULL),(334,1,NULL,NULL),(334,2,NULL,NULL),(335,1,NULL,NULL),(335,2,NULL,NULL),(336,1,NULL,NULL),(336,2,NULL,NULL),(337,1,NULL,NULL),(337,2,NULL,NULL),(338,1,NULL,NULL),(338,2,NULL,NULL),(339,1,NULL,NULL),(339,2,NULL,NULL),(340,1,NULL,NULL),(340,2,NULL,NULL),(341,1,NULL,NULL),(341,2,NULL,NULL),(342,1,NULL,NULL),(342,2,NULL,NULL),(343,1,NULL,NULL),(343,2,NULL,NULL),(344,1,NULL,NULL),(344,2,NULL,NULL),(345,1,NULL,NULL),(345,2,NULL,NULL),(346,1,NULL,NULL),(346,2,NULL,NULL),(347,1,NULL,NULL),(347,2,NULL,NULL);
+INSERT INTO `iam_account_group` VALUES (2,1,NULL,NULL),(2,2,NULL,NULL),(2,121,'2024-03-01 11:59:50',NULL),(100,1,NULL,NULL),(100,2,NULL,NULL),(101,1,NULL,NULL),(101,2,NULL,NULL),(102,1,NULL,NULL),(102,2,NULL,NULL),(103,1,NULL,NULL),(103,2,NULL,NULL),(104,1,NULL,NULL),(104,2,NULL,NULL),(105,1,NULL,NULL),(105,2,NULL,NULL),(106,1,NULL,NULL),(106,2,NULL,NULL),(107,1,NULL,NULL),(107,2,NULL,NULL),(108,1,NULL,NULL),(108,2,NULL,NULL),(109,1,NULL,NULL),(109,2,NULL,NULL),(110,1,NULL,NULL),(110,2,NULL,NULL),(111,1,NULL,NULL),(111,2,NULL,NULL),(112,1,NULL,NULL),(112,2,NULL,NULL),(113,1,NULL,NULL),(113,2,NULL,NULL),(114,1,NULL,NULL),(114,2,NULL,NULL),(115,1,NULL,NULL),(115,2,NULL,NULL),(116,1,NULL,NULL),(116,2,NULL,NULL),(117,1,NULL,NULL),(117,2,NULL,NULL),(118,1,NULL,NULL),(118,2,NULL,NULL),(119,1,NULL,NULL),(119,2,NULL,NULL),(120,1,NULL,NULL),(120,2,NULL,NULL),(121,1,NULL,NULL),(121,2,NULL,NULL),(122,1,NULL,NULL),(122,2,NULL,NULL),(123,1,NULL,NULL),(123,2,NULL,NULL),(124,1,NULL,NULL),(124,2,NULL,NULL),(125,1,NULL,NULL),(125,2,NULL,NULL),(126,1,NULL,NULL),(126,2,NULL,NULL),(127,1,NULL,NULL),(127,2,NULL,NULL),(128,1,NULL,NULL),(128,2,NULL,NULL),(129,1,NULL,NULL),(129,2,NULL,NULL),(130,1,NULL,NULL),(130,2,NULL,NULL),(131,1,NULL,NULL),(131,2,NULL,NULL),(132,1,NULL,NULL),(132,2,NULL,NULL),(133,1,NULL,NULL),(133,2,NULL,NULL),(134,1,NULL,NULL),(134,2,NULL,NULL),(135,1,NULL,NULL),(135,2,NULL,NULL),(136,1,NULL,NULL),(136,2,NULL,NULL),(137,1,NULL,NULL),(137,2,NULL,NULL),(138,1,NULL,NULL),(138,2,NULL,NULL),(139,1,NULL,NULL),(139,2,NULL,NULL),(140,1,NULL,NULL),(140,2,NULL,NULL),(141,1,NULL,NULL),(141,2,NULL,NULL),(142,1,NULL,NULL),(142,2,NULL,NULL),(143,1,NULL,NULL),(143,2,NULL,NULL),(144,1,NULL,NULL),(144,2,NULL,NULL),(145,1,NULL,NULL),(145,2,NULL,NULL),(146,1,NULL,NULL),(146,2,NULL,NULL),(147,1,NULL,NULL),(147,2,NULL,NULL),(148,1,NULL,NULL),(148,2,NULL,NULL),(149,1,NULL,NULL),(149,2,NULL,NULL),(150,1,NULL,NULL),(150,2,NULL,NULL),(151,1,NULL,NULL),(151,2,NULL,NULL),(152,1,NULL,NULL),(152,2,NULL,NULL),(153,1,NULL,NULL),(153,2,NULL,NULL),(154,1,NULL,NULL),(154,2,NULL,NULL),(155,1,NULL,NULL),(155,2,NULL,NULL),(156,1,NULL,NULL),(156,2,NULL,NULL),(157,1,NULL,NULL),(157,2,NULL,NULL),(158,1,NULL,NULL),(158,2,NULL,NULL),(159,1,NULL,NULL),(159,2,NULL,NULL),(160,1,NULL,NULL),(160,2,NULL,NULL),(161,1,NULL,NULL),(161,2,NULL,NULL),(162,1,NULL,NULL),(162,2,NULL,NULL),(163,1,NULL,NULL),(163,2,NULL,NULL),(164,1,NULL,NULL),(164,2,NULL,NULL),(165,1,NULL,NULL),(165,2,NULL,NULL),(166,1,NULL,NULL),(166,2,NULL,NULL),(167,1,NULL,NULL),(167,2,NULL,NULL),(168,1,NULL,NULL),(168,2,NULL,NULL),(169,1,NULL,NULL),(169,2,NULL,NULL),(170,1,NULL,NULL),(170,2,NULL,NULL),(171,1,NULL,NULL),(171,2,NULL,NULL),(172,1,NULL,NULL),(172,2,NULL,NULL),(173,1,NULL,NULL),(173,2,NULL,NULL),(174,1,NULL,NULL),(174,2,NULL,NULL),(175,1,NULL,NULL),(175,2,NULL,NULL),(176,1,NULL,NULL),(176,2,NULL,NULL),(177,1,NULL,NULL),(177,2,NULL,NULL),(178,1,NULL,NULL),(178,2,NULL,NULL),(179,1,NULL,NULL),(179,2,NULL,NULL),(180,1,NULL,NULL),(180,2,NULL,NULL),(181,1,NULL,NULL),(181,2,NULL,NULL),(182,1,NULL,NULL),(182,2,NULL,NULL),(183,1,NULL,NULL),(183,2,NULL,NULL),(184,1,NULL,NULL),(184,2,NULL,NULL),(185,1,NULL,NULL),(185,2,NULL,NULL),(186,1,NULL,NULL),(186,2,NULL,NULL),(187,1,NULL,NULL),(187,2,NULL,NULL),(188,1,NULL,NULL),(188,2,NULL,NULL),(189,1,NULL,NULL),(189,2,NULL,NULL),(190,1,NULL,NULL),(190,2,NULL,NULL),(191,1,NULL,NULL),(191,2,NULL,NULL),(192,1,NULL,NULL),(192,2,NULL,NULL),(193,1,NULL,NULL),(193,2,NULL,NULL),(194,1,NULL,NULL),(194,2,NULL,NULL),(195,1,NULL,NULL),(195,2,NULL,NULL),(196,1,NULL,NULL),(196,2,NULL,NULL),(197,1,NULL,NULL),(197,2,NULL,NULL),(198,1,NULL,NULL),(198,2,NULL,NULL),(199,1,NULL,NULL),(199,2,NULL,NULL),(200,1,NULL,NULL),(200,2,NULL,NULL),(201,1,NULL,NULL),(201,2,NULL,NULL),(202,1,NULL,NULL),(202,2,NULL,NULL),(203,1,NULL,NULL),(203,2,NULL,NULL),(204,1,NULL,NULL),(204,2,NULL,NULL),(205,1,NULL,NULL),(205,2,NULL,NULL),(206,1,NULL,NULL),(206,2,NULL,NULL),(207,1,NULL,NULL),(207,2,NULL,NULL),(208,1,NULL,NULL),(208,2,NULL,NULL),(209,1,NULL,NULL),(209,2,NULL,NULL),(210,1,NULL,NULL),(210,2,NULL,NULL),(211,1,NULL,NULL),(211,2,NULL,NULL),(212,1,NULL,NULL),(212,2,NULL,NULL),(213,1,NULL,NULL),(213,2,NULL,NULL),(214,1,NULL,NULL),(214,2,NULL,NULL),(215,1,NULL,NULL),(215,2,NULL,NULL),(216,1,NULL,NULL),(216,2,NULL,NULL),(217,1,NULL,NULL),(217,2,NULL,NULL),(218,1,NULL,NULL),(218,2,NULL,NULL),(219,1,NULL,NULL),(219,2,NULL,NULL),(220,1,NULL,NULL),(220,2,NULL,NULL),(221,1,NULL,NULL),(221,2,NULL,NULL),(222,1,NULL,NULL),(222,2,NULL,NULL),(223,1,NULL,NULL),(223,2,NULL,NULL),(224,1,NULL,NULL),(224,2,NULL,NULL),(225,1,NULL,NULL),(225,2,NULL,NULL),(226,1,NULL,NULL),(226,2,NULL,NULL),(227,1,NULL,NULL),(227,2,NULL,NULL),(228,1,NULL,NULL),(228,2,NULL,NULL),(229,1,NULL,NULL),(229,2,NULL,NULL),(230,1,NULL,NULL),(230,2,NULL,NULL),(231,1,NULL,NULL),(231,2,NULL,NULL),(232,1,NULL,NULL),(232,2,NULL,NULL),(233,1,NULL,NULL),(233,2,NULL,NULL),(234,1,NULL,NULL),(234,2,NULL,NULL),(235,1,NULL,NULL),(235,2,NULL,NULL),(236,1,NULL,NULL),(236,2,NULL,NULL),(237,1,NULL,NULL),(237,2,NULL,NULL),(238,1,NULL,NULL),(238,2,NULL,NULL),(239,1,NULL,NULL),(239,2,NULL,NULL),(240,1,NULL,NULL),(240,2,NULL,NULL),(241,1,NULL,NULL),(241,2,NULL,NULL),(242,1,NULL,NULL),(242,2,NULL,NULL),(243,1,NULL,NULL),(243,2,NULL,NULL),(244,1,NULL,NULL),(244,2,NULL,NULL),(245,1,NULL,NULL),(245,2,NULL,NULL),(246,1,NULL,NULL),(246,2,NULL,NULL),(247,1,NULL,NULL),(247,2,NULL,NULL),(248,1,NULL,NULL),(248,2,NULL,NULL),(249,1,NULL,NULL),(249,2,NULL,NULL),(250,1,NULL,NULL),(250,2,NULL,NULL),(251,1,NULL,NULL),(251,2,NULL,NULL),(252,1,NULL,NULL),(252,2,NULL,NULL),(253,1,NULL,NULL),(253,2,NULL,NULL),(254,1,NULL,NULL),(254,2,NULL,NULL),(255,1,NULL,NULL),(255,2,NULL,NULL),(256,1,NULL,NULL),(256,2,NULL,NULL),(257,1,NULL,NULL),(257,2,NULL,NULL),(258,1,NULL,NULL),(258,2,NULL,NULL),(259,1,NULL,NULL),(259,2,NULL,NULL),(260,1,NULL,NULL),(260,2,NULL,NULL),(261,1,NULL,NULL),(261,2,NULL,NULL),(262,1,NULL,NULL),(262,2,NULL,NULL),(263,1,NULL,NULL),(263,2,NULL,NULL),(264,1,NULL,NULL),(264,2,NULL,NULL),(265,1,NULL,NULL),(265,2,NULL,NULL),(266,1,NULL,NULL),(266,2,NULL,NULL),(267,1,NULL,NULL),(267,2,NULL,NULL),(268,1,NULL,NULL),(268,2,NULL,NULL),(269,1,NULL,NULL),(269,2,NULL,NULL),(270,1,NULL,NULL),(270,2,NULL,NULL),(271,1,NULL,NULL),(271,2,NULL,NULL),(272,1,NULL,NULL),(272,2,NULL,NULL),(273,1,NULL,NULL),(273,2,NULL,NULL),(274,1,NULL,NULL),(274,2,NULL,NULL),(275,1,NULL,NULL),(275,2,NULL,NULL),(276,1,NULL,NULL),(276,2,NULL,NULL),(277,1,NULL,NULL),(277,2,NULL,NULL),(278,1,NULL,NULL),(278,2,NULL,NULL),(279,1,NULL,NULL),(279,2,NULL,NULL),(280,1,NULL,NULL),(280,2,NULL,NULL),(281,1,NULL,NULL),(281,2,NULL,NULL),(282,1,NULL,NULL),(282,2,NULL,NULL),(283,1,NULL,NULL),(283,2,NULL,NULL),(284,1,NULL,NULL),(284,2,NULL,NULL),(285,1,NULL,NULL),(285,2,NULL,NULL),(286,1,NULL,NULL),(286,2,NULL,NULL),(287,1,NULL,NULL),(287,2,NULL,NULL),(288,1,NULL,NULL),(288,2,NULL,NULL),(289,1,NULL,NULL),(289,2,NULL,NULL),(290,1,NULL,NULL),(290,2,NULL,NULL),(291,1,NULL,NULL),(291,2,NULL,NULL),(292,1,NULL,NULL),(292,2,NULL,NULL),(293,1,NULL,NULL),(293,2,NULL,NULL),(294,1,NULL,NULL),(294,2,NULL,NULL),(295,1,NULL,NULL),(295,2,NULL,NULL),(296,1,NULL,NULL),(296,2,NULL,NULL),(297,1,NULL,NULL),(297,2,NULL,NULL),(298,1,NULL,NULL),(298,2,NULL,NULL),(299,1,NULL,NULL),(299,2,NULL,NULL),(300,1,NULL,NULL),(300,2,NULL,NULL),(301,1,NULL,NULL),(301,2,NULL,NULL),(302,1,NULL,NULL),(302,2,NULL,NULL),(303,1,NULL,NULL),(303,2,NULL,NULL),(304,1,NULL,NULL),(304,2,NULL,NULL),(305,1,NULL,NULL),(305,2,NULL,NULL),(306,1,NULL,NULL),(306,2,NULL,NULL),(307,1,NULL,NULL),(307,2,NULL,NULL),(308,1,NULL,NULL),(308,2,NULL,NULL),(309,1,NULL,NULL),(309,2,NULL,NULL),(310,1,NULL,NULL),(310,2,NULL,NULL),(311,1,NULL,NULL),(311,2,NULL,NULL),(312,1,NULL,NULL),(312,2,NULL,NULL),(313,1,NULL,NULL),(313,2,NULL,NULL),(314,1,NULL,NULL),(314,2,NULL,NULL),(315,1,NULL,NULL),(315,2,NULL,NULL),(316,1,NULL,NULL),(316,2,NULL,NULL),(317,1,NULL,NULL),(317,2,NULL,NULL),(318,1,NULL,NULL),(318,2,NULL,NULL),(319,1,NULL,NULL),(319,2,NULL,NULL),(320,1,NULL,NULL),(320,2,NULL,NULL),(321,1,NULL,NULL),(321,2,NULL,NULL),(322,1,NULL,NULL),(322,2,NULL,NULL),(323,1,NULL,NULL),(323,2,NULL,NULL),(324,1,NULL,NULL),(324,2,NULL,NULL),(325,1,NULL,NULL),(325,2,NULL,NULL),(326,1,NULL,NULL),(326,2,NULL,NULL),(327,1,NULL,NULL),(327,2,NULL,NULL),(328,1,NULL,NULL),(328,2,NULL,NULL),(329,1,NULL,NULL),(329,2,NULL,NULL),(330,1,NULL,NULL),(330,2,NULL,NULL),(331,1,NULL,NULL),(331,2,NULL,NULL),(332,1,NULL,NULL),(332,2,NULL,NULL),(333,1,NULL,NULL),(333,2,NULL,NULL),(334,1,NULL,NULL),(334,2,NULL,NULL),(335,1,NULL,NULL),(335,2,NULL,NULL),(336,1,NULL,NULL),(336,2,NULL,NULL),(337,1,NULL,NULL),(337,2,NULL,NULL),(338,1,NULL,NULL),(338,2,NULL,NULL),(339,1,NULL,NULL),(339,2,NULL,NULL),(340,1,NULL,NULL),(340,2,NULL,NULL),(341,1,NULL,NULL),(341,2,NULL,NULL),(342,1,NULL,NULL),(342,2,NULL,NULL),(343,1,NULL,NULL),(343,2,NULL,NULL),(344,1,NULL,NULL),(344,2,NULL,NULL),(345,1,NULL,NULL),(345,2,NULL,NULL),(346,1,NULL,NULL),(346,2,NULL,NULL),(347,1,NULL,NULL),(347,2,NULL,NULL);
 /*!40000 ALTER TABLE `iam_account_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1092,7 +1065,7 @@ CREATE TABLE `iam_account_labels` (
   `NAME` varchar(64) NOT NULL,
   `PREFIX` varchar(256) DEFAULT NULL,
   `val` varchar(64) DEFAULT NULL,
-  `account_id` bigint DEFAULT NULL,
+  `account_id` bigint(20) DEFAULT NULL,
   KEY `INDEX_iam_account_labels_prefix_name_val` (`PREFIX`,`NAME`,`val`),
   KEY `INDEX_iam_account_labels_prefix_name` (`PREFIX`,`NAME`),
   KEY `FK_iam_account_labels_account_id` (`account_id`),
@@ -1117,7 +1090,7 @@ DROP TABLE IF EXISTS `iam_address`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_address` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `COUNTRY` varchar(2) DEFAULT NULL,
   `FORMATTED` varchar(128) DEFAULT NULL,
   `LOCALITY` varchar(128) DEFAULT NULL,
@@ -1145,15 +1118,14 @@ DROP TABLE IF EXISTS `iam_aup`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_aup` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `creation_time` datetime NOT NULL,
   `description` varchar(128) DEFAULT NULL,
   `last_update_time` datetime NOT NULL,
   `name` varchar(36) NOT NULL,
-  `sig_validity_days` bigint NOT NULL,
+  `sig_validity_days` bigint(20) NOT NULL,
   `text` longtext,
   `url` varchar(256) DEFAULT NULL,
-  `aup_reminders_days` varchar(128) NOT NULL DEFAULT '30,15,1',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -1176,10 +1148,10 @@ DROP TABLE IF EXISTS `iam_aup_signature`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_aup_signature` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `signature_time` datetime NOT NULL,
-  `account_id` bigint DEFAULT NULL,
-  `aup_id` bigint DEFAULT NULL,
+  `account_id` bigint(20) DEFAULT NULL,
+  `aup_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `UNQ_iam_aup_signature_0` (`aup_id`,`account_id`),
   KEY `FK_iam_aup_signature_account_id` (`account_id`),
@@ -1205,11 +1177,11 @@ DROP TABLE IF EXISTS `iam_authority`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_authority` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `auth` varchar(128) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `auth` (`auth`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1218,7 +1190,7 @@ CREATE TABLE `iam_authority` (
 
 LOCK TABLES `iam_authority` WRITE;
 /*!40000 ALTER TABLE `iam_authority` DISABLE KEYS */;
-INSERT INTO `iam_authority` VALUES (1,'ROLE_ADMIN'),(27,'ROLE_GM:5695cc27-4bee-4e99-b56e-d42a9c72e34e'),(5,'ROLE_GM:6a384bcd-d4b3-4b7f-a2fe-7d897ada0dd1'),(26,'ROLE_GM:b9149615-9bff-4a2a-a3e4-f4ecdb45d89a'),(6,'ROLE_GM:c617d586-54e6-411d-8e38-649677980001'),(7,'ROLE_GM:c617d586-54e6-411d-8e38-649677980002'),(8,'ROLE_GM:c617d586-54e6-411d-8e38-649677980003'),(9,'ROLE_GM:c617d586-54e6-411d-8e38-649677980004'),(10,'ROLE_GM:c617d586-54e6-411d-8e38-649677980005'),(11,'ROLE_GM:c617d586-54e6-411d-8e38-649677980006'),(12,'ROLE_GM:c617d586-54e6-411d-8e38-649677980007'),(13,'ROLE_GM:c617d586-54e6-411d-8e38-649677980008'),(14,'ROLE_GM:c617d586-54e6-411d-8e38-649677980009'),(15,'ROLE_GM:c617d586-54e6-411d-8e38-649677980010'),(16,'ROLE_GM:c617d586-54e6-411d-8e38-649677980011'),(17,'ROLE_GM:c617d586-54e6-411d-8e38-649677980012'),(18,'ROLE_GM:c617d586-54e6-411d-8e38-649677980013'),(19,'ROLE_GM:c617d586-54e6-411d-8e38-649677980014'),(20,'ROLE_GM:c617d586-54e6-411d-8e38-649677980015'),(21,'ROLE_GM:c617d586-54e6-411d-8e38-649677980016'),(22,'ROLE_GM:c617d586-54e6-411d-8e38-649677980017'),(23,'ROLE_GM:c617d586-54e6-411d-8e38-649677980018'),(24,'ROLE_GM:c617d586-54e6-411d-8e38-649677980019'),(25,'ROLE_GM:c617d586-54e6-411d-8e38-649677980020'),(4,'ROLE_GM:c617d586-54e6-411d-8e38-64967798fa8a'),(28,'ROLE_GM:d17ffde4-045b-44dc-8e93-b9a50ddbc223'),(3,'ROLE_PRE_AUTHENTICATED'),(2,'ROLE_USER');
+INSERT INTO `iam_authority` VALUES (1,'ROLE_ADMIN'),(5,'ROLE_GM:6a384bcd-d4b3-4b7f-a2fe-7d897ada0dd1'),(26,'ROLE_GM:b9149615-9bff-4a2a-a3e4-f4ecdb45d89a'),(6,'ROLE_GM:c617d586-54e6-411d-8e38-649677980001'),(7,'ROLE_GM:c617d586-54e6-411d-8e38-649677980002'),(8,'ROLE_GM:c617d586-54e6-411d-8e38-649677980003'),(9,'ROLE_GM:c617d586-54e6-411d-8e38-649677980004'),(10,'ROLE_GM:c617d586-54e6-411d-8e38-649677980005'),(11,'ROLE_GM:c617d586-54e6-411d-8e38-649677980006'),(12,'ROLE_GM:c617d586-54e6-411d-8e38-649677980007'),(13,'ROLE_GM:c617d586-54e6-411d-8e38-649677980008'),(14,'ROLE_GM:c617d586-54e6-411d-8e38-649677980009'),(15,'ROLE_GM:c617d586-54e6-411d-8e38-649677980010'),(16,'ROLE_GM:c617d586-54e6-411d-8e38-649677980011'),(17,'ROLE_GM:c617d586-54e6-411d-8e38-649677980012'),(18,'ROLE_GM:c617d586-54e6-411d-8e38-649677980013'),(19,'ROLE_GM:c617d586-54e6-411d-8e38-649677980014'),(20,'ROLE_GM:c617d586-54e6-411d-8e38-649677980015'),(21,'ROLE_GM:c617d586-54e6-411d-8e38-649677980016'),(22,'ROLE_GM:c617d586-54e6-411d-8e38-649677980017'),(23,'ROLE_GM:c617d586-54e6-411d-8e38-649677980018'),(24,'ROLE_GM:c617d586-54e6-411d-8e38-649677980019'),(25,'ROLE_GM:c617d586-54e6-411d-8e38-649677980020'),(4,'ROLE_GM:c617d586-54e6-411d-8e38-64967798fa8a'),(3,'ROLE_PRE_AUTHENTICATED'),(2,'ROLE_USER');
 /*!40000 ALTER TABLE `iam_authority` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1230,7 +1202,7 @@ DROP TABLE IF EXISTS `iam_email_notification`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_email_notification` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `UUID` varchar(36) NOT NULL,
   `NOTIFICATION_TYPE` varchar(128) NOT NULL,
   `SUBJECT` varchar(128) DEFAULT NULL,
@@ -1238,7 +1210,7 @@ CREATE TABLE `iam_email_notification` (
   `CREATION_TIME` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `DELIVERY_STATUS` varchar(128) DEFAULT NULL,
   `LAST_UPDATE` timestamp NULL DEFAULT NULL,
-  `REQUEST_ID` bigint DEFAULT NULL,
+  `REQUEST_ID` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `UUID` (`UUID`),
   KEY `FK_iam_email_notification_request_id` (`REQUEST_ID`),
@@ -1263,7 +1235,7 @@ DROP TABLE IF EXISTS `iam_exchange_policy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_exchange_policy` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `creation_time` datetime NOT NULL,
   `description` varchar(512) DEFAULT NULL,
   `last_update_time` datetime NOT NULL,
@@ -1297,7 +1269,7 @@ CREATE TABLE `iam_exchange_scope_policies` (
   `param` varchar(256) DEFAULT NULL,
   `rule` varchar(6) NOT NULL,
   `type` varchar(6) NOT NULL,
-  `exchange_policy_id` bigint DEFAULT NULL,
+  `exchange_policy_id` bigint(20) DEFAULT NULL,
   KEY `FK_iam_exchange_scope_policies_exchange_policy_id` (`exchange_policy_id`),
   CONSTRAINT `FK_iam_exchange_scope_policies_exchange_policy_id` FOREIGN KEY (`exchange_policy_id`) REFERENCES `iam_exchange_policy` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -1320,10 +1292,10 @@ DROP TABLE IF EXISTS `iam_ext_authn`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_ext_authn` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `authentication_time` datetime NOT NULL,
   `expiration_time` datetime NOT NULL,
-  `saved_authn_id` bigint DEFAULT NULL,
+  `saved_authn_id` bigint(20) DEFAULT NULL,
   `type` varchar(32) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `saved_authn_id` (`saved_authn_id`)
@@ -1347,10 +1319,10 @@ DROP TABLE IF EXISTS `iam_ext_authn_attr`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_ext_authn_attr` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `value` varchar(512) NOT NULL,
-  `details_id` bigint DEFAULT NULL,
+  `details_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_iam_ext_authn_attr_details_id` (`details_id`),
   CONSTRAINT `FK_iam_ext_authn_attr_details_id` FOREIGN KEY (`details_id`) REFERENCES `iam_ext_authn` (`id`)
@@ -1374,20 +1346,20 @@ DROP TABLE IF EXISTS `iam_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_group` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `CREATIONTIME` datetime NOT NULL,
   `DESCRIPTION` varchar(512) DEFAULT NULL,
   `LASTUPDATETIME` datetime NOT NULL,
   `name` varchar(512) NOT NULL,
   `UUID` varchar(36) NOT NULL,
-  `parent_group_id` bigint DEFAULT NULL,
+  `parent_group_id` bigint(20) DEFAULT NULL,
   `default_group` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `NAME` (`name`),
   UNIQUE KEY `UUID` (`UUID`),
   KEY `FK_iam_group_parent_id` (`parent_group_id`),
   CONSTRAINT `FK_iam_group_parent_id` FOREIGN KEY (`parent_group_id`) REFERENCES `iam_group` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1396,7 +1368,7 @@ CREATE TABLE `iam_group` (
 
 LOCK TABLES `iam_group` WRITE;
 /*!40000 ALTER TABLE `iam_group` DISABLE KEYS */;
-INSERT INTO `iam_group` VALUES (1,'2024-03-01 11:57:22','The production group','2024-03-01 11:57:22','Production','c617d586-54e6-411d-8e38-64967798fa8a',NULL,0),(2,'2024-03-01 11:57:22','The analysis group','2024-03-01 11:57:22','Analysis','6a384bcd-d4b3-4b7f-a2fe-7d897ada0dd1',NULL,0),(101,'2024-03-01 11:57:22','Test group-001','2024-03-01 11:57:22','Test-001','c617d586-54e6-411d-8e38-649677980001',NULL,0),(102,'2024-03-01 11:57:22','Test group-002','2024-03-01 11:57:22','Test-002','c617d586-54e6-411d-8e38-649677980002',NULL,0),(103,'2024-03-01 11:57:22','Test group-003','2024-03-01 11:57:22','Test-003','c617d586-54e6-411d-8e38-649677980003',NULL,0),(104,'2024-03-01 11:57:22','Test group-004','2024-03-01 11:57:22','Test-004','c617d586-54e6-411d-8e38-649677980004',NULL,0),(105,'2024-03-01 11:57:22','Test group-005','2024-03-01 11:57:22','Test-005','c617d586-54e6-411d-8e38-649677980005',NULL,0),(106,'2024-03-01 11:57:22','Test group-006','2024-03-01 11:57:22','Test-006','c617d586-54e6-411d-8e38-649677980006',NULL,0),(107,'2024-03-01 11:57:22','Test group-007','2024-03-01 11:57:22','Test-007','c617d586-54e6-411d-8e38-649677980007',NULL,0),(108,'2024-03-01 11:57:22','Test group-008','2024-03-01 11:57:22','Test-008','c617d586-54e6-411d-8e38-649677980008',NULL,0),(109,'2024-03-01 11:57:22','Test group-009','2024-03-01 11:57:22','Test-009','c617d586-54e6-411d-8e38-649677980009',NULL,0),(110,'2024-03-01 11:57:22','Test group-010','2024-03-01 11:57:22','Test-010','c617d586-54e6-411d-8e38-649677980010',NULL,0),(111,'2024-03-01 11:57:22','Test group-011','2024-03-01 11:57:22','Test-011','c617d586-54e6-411d-8e38-649677980011',NULL,0),(112,'2024-03-01 11:57:22','Test group-012','2024-03-01 11:57:22','Test-012','c617d586-54e6-411d-8e38-649677980012',NULL,0),(113,'2024-03-01 11:57:22','Test group-013','2024-03-01 11:57:22','Test-013','c617d586-54e6-411d-8e38-649677980013',NULL,0),(114,'2024-03-01 11:57:22','Test group-014','2024-03-01 11:57:22','Test-014','c617d586-54e6-411d-8e38-649677980014',NULL,0),(115,'2024-03-01 11:57:22','Test group-015','2024-03-01 11:57:22','Test-015','c617d586-54e6-411d-8e38-649677980015',NULL,0),(116,'2024-03-01 11:57:22','Test group-016','2024-03-01 11:57:22','Test-016','c617d586-54e6-411d-8e38-649677980016',NULL,0),(117,'2024-03-01 11:57:22','Test group-017','2024-03-01 11:57:22','Test-017','c617d586-54e6-411d-8e38-649677980017',NULL,0),(118,'2024-03-01 11:57:22','Test group-018','2024-03-01 11:57:22','Test-018','c617d586-54e6-411d-8e38-649677980018',NULL,0),(119,'2024-03-01 11:57:22','Test group-019','2024-03-01 11:57:22','Test-019','c617d586-54e6-411d-8e38-649677980019',NULL,0),(120,'2024-03-01 11:57:22','Test group-020','2024-03-01 11:57:22','Test-020','c617d586-54e6-411d-8e38-649677980020',NULL,0),(121,'2024-03-01 11:59:26',NULL,'2024-03-01 11:59:50','indigo-dc','b9149615-9bff-4a2a-a3e4-f4ecdb45d89a',NULL,0),(122,'2025-05-03 04:52:25',NULL,'2025-05-03 04:56:28','indigo-dc/xfers','5695cc27-4bee-4e99-b56e-d42a9c72e34e',121,0),(123,'2025-05-03 04:52:35',NULL,'2025-05-03 04:56:39','indigo-dc/webdav','d17ffde4-045b-44dc-8e93-b9a50ddbc223',121,0);
+INSERT INTO `iam_group` VALUES (1,'2024-03-01 11:57:22','The production group','2024-03-01 11:57:22','Production','c617d586-54e6-411d-8e38-64967798fa8a',NULL,0),(2,'2024-03-01 11:57:22','The analysis group','2024-03-01 11:57:22','Analysis','6a384bcd-d4b3-4b7f-a2fe-7d897ada0dd1',NULL,0),(101,'2024-03-01 11:57:22','Test group-001','2024-03-01 11:57:22','Test-001','c617d586-54e6-411d-8e38-649677980001',NULL,0),(102,'2024-03-01 11:57:22','Test group-002','2024-03-01 11:57:22','Test-002','c617d586-54e6-411d-8e38-649677980002',NULL,0),(103,'2024-03-01 11:57:22','Test group-003','2024-03-01 11:57:22','Test-003','c617d586-54e6-411d-8e38-649677980003',NULL,0),(104,'2024-03-01 11:57:22','Test group-004','2024-03-01 11:57:22','Test-004','c617d586-54e6-411d-8e38-649677980004',NULL,0),(105,'2024-03-01 11:57:22','Test group-005','2024-03-01 11:57:22','Test-005','c617d586-54e6-411d-8e38-649677980005',NULL,0),(106,'2024-03-01 11:57:22','Test group-006','2024-03-01 11:57:22','Test-006','c617d586-54e6-411d-8e38-649677980006',NULL,0),(107,'2024-03-01 11:57:22','Test group-007','2024-03-01 11:57:22','Test-007','c617d586-54e6-411d-8e38-649677980007',NULL,0),(108,'2024-03-01 11:57:22','Test group-008','2024-03-01 11:57:22','Test-008','c617d586-54e6-411d-8e38-649677980008',NULL,0),(109,'2024-03-01 11:57:22','Test group-009','2024-03-01 11:57:22','Test-009','c617d586-54e6-411d-8e38-649677980009',NULL,0),(110,'2024-03-01 11:57:22','Test group-010','2024-03-01 11:57:22','Test-010','c617d586-54e6-411d-8e38-649677980010',NULL,0),(111,'2024-03-01 11:57:22','Test group-011','2024-03-01 11:57:22','Test-011','c617d586-54e6-411d-8e38-649677980011',NULL,0),(112,'2024-03-01 11:57:22','Test group-012','2024-03-01 11:57:22','Test-012','c617d586-54e6-411d-8e38-649677980012',NULL,0),(113,'2024-03-01 11:57:22','Test group-013','2024-03-01 11:57:22','Test-013','c617d586-54e6-411d-8e38-649677980013',NULL,0),(114,'2024-03-01 11:57:22','Test group-014','2024-03-01 11:57:22','Test-014','c617d586-54e6-411d-8e38-649677980014',NULL,0),(115,'2024-03-01 11:57:22','Test group-015','2024-03-01 11:57:22','Test-015','c617d586-54e6-411d-8e38-649677980015',NULL,0),(116,'2024-03-01 11:57:22','Test group-016','2024-03-01 11:57:22','Test-016','c617d586-54e6-411d-8e38-649677980016',NULL,0),(117,'2024-03-01 11:57:22','Test group-017','2024-03-01 11:57:22','Test-017','c617d586-54e6-411d-8e38-649677980017',NULL,0),(118,'2024-03-01 11:57:22','Test group-018','2024-03-01 11:57:22','Test-018','c617d586-54e6-411d-8e38-649677980018',NULL,0),(119,'2024-03-01 11:57:22','Test group-019','2024-03-01 11:57:22','Test-019','c617d586-54e6-411d-8e38-649677980019',NULL,0),(120,'2024-03-01 11:57:22','Test group-020','2024-03-01 11:57:22','Test-020','c617d586-54e6-411d-8e38-649677980020',NULL,0),(121,'2024-03-01 11:59:26',NULL,'2024-03-01 11:59:50','indigo-dc','b9149615-9bff-4a2a-a3e4-f4ecdb45d89a',NULL,0);
 /*!40000 ALTER TABLE `iam_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1410,7 +1382,7 @@ DROP TABLE IF EXISTS `iam_group_attrs`;
 CREATE TABLE `iam_group_attrs` (
   `NAME` varchar(64) NOT NULL,
   `val` varchar(256) DEFAULT NULL,
-  `group_id` bigint DEFAULT NULL,
+  `group_id` bigint(20) DEFAULT NULL,
   KEY `INDEX_iam_group_attrs_name` (`NAME`),
   KEY `INDEX_iam_group_attrs_name_val` (`NAME`,`val`),
   KEY `FK_iam_group_attrs_group_id` (`group_id`),
@@ -1438,7 +1410,7 @@ CREATE TABLE `iam_group_labels` (
   `NAME` varchar(64) NOT NULL,
   `PREFIX` varchar(256) DEFAULT NULL,
   `val` varchar(64) DEFAULT NULL,
-  `group_id` bigint DEFAULT NULL,
+  `group_id` bigint(20) DEFAULT NULL,
   KEY `INDEX_iam_group_labels_prefix_name_val` (`PREFIX`,`NAME`,`val`),
   KEY `INDEX_iam_group_labels_prefix_name` (`PREFIX`,`NAME`),
   KEY `FK_iam_group_labels_group_id` (`group_id`),
@@ -1452,7 +1424,6 @@ CREATE TABLE `iam_group_labels` (
 
 LOCK TABLES `iam_group_labels` WRITE;
 /*!40000 ALTER TABLE `iam_group_labels` DISABLE KEYS */;
-INSERT INTO `iam_group_labels` VALUES ('wlcg.optional-group',NULL,NULL,123),('voms.role',NULL,NULL,123);
 /*!40000 ALTER TABLE `iam_group_labels` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1464,10 +1435,10 @@ DROP TABLE IF EXISTS `iam_group_request`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_group_request` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `UUID` varchar(36) NOT NULL,
-  `ACCOUNT_ID` bigint DEFAULT NULL,
-  `GROUP_ID` bigint DEFAULT NULL,
+  `ACCOUNT_ID` bigint(20) DEFAULT NULL,
+  `GROUP_ID` bigint(20) DEFAULT NULL,
   `STATUS` varchar(50) DEFAULT NULL,
   `NOTES` text,
   `MOTIVATION` text,
@@ -1499,8 +1470,8 @@ DROP TABLE IF EXISTS `iam_notification_receiver`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_notification_receiver` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
-  `NOTIFICATION_ID` bigint DEFAULT NULL,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `NOTIFICATION_ID` bigint(20) DEFAULT NULL,
   `EMAIL_ADDRESS` varchar(254) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK_iam_notification_receiver_notification_id` (`NOTIFICATION_ID`),
@@ -1525,10 +1496,10 @@ DROP TABLE IF EXISTS `iam_oidc_id`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_oidc_id` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `ISSUER` varchar(256) NOT NULL,
   `SUBJECT` varchar(256) NOT NULL,
-  `account_id` bigint DEFAULT NULL,
+  `account_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK_iam_oidc_id_account_id` (`account_id`),
   CONSTRAINT `FK_iam_oidc_id_account_id` FOREIGN KEY (`account_id`) REFERENCES `iam_account` (`ID`)
@@ -1553,10 +1524,10 @@ DROP TABLE IF EXISTS `iam_reg_request`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_reg_request` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `UUID` varchar(36) NOT NULL,
   `CREATIONTIME` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ACCOUNT_ID` bigint DEFAULT NULL,
+  `ACCOUNT_ID` bigint(20) DEFAULT NULL,
   `STATUS` varchar(50) DEFAULT NULL,
   `LASTUPDATETIME` timestamp NULL DEFAULT NULL,
   `notes` text,
@@ -1587,7 +1558,7 @@ CREATE TABLE `iam_reg_request_labels` (
   `NAME` varchar(64) NOT NULL,
   `PREFIX` varchar(256) DEFAULT NULL,
   `val` varchar(64) DEFAULT NULL,
-  `request_id` bigint DEFAULT NULL,
+  `request_id` bigint(20) DEFAULT NULL,
   KEY `INDEX_iam_reg_request_labels_prefix_name_val` (`PREFIX`,`NAME`,`val`),
   KEY `INDEX_iam_reg_request_labels_prefix_name` (`PREFIX`,`NAME`),
   KEY `FK_iam_reg_request_labels_request_id` (`request_id`),
@@ -1612,10 +1583,10 @@ DROP TABLE IF EXISTS `iam_saml_id`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_saml_id` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `IDPID` varchar(256) NOT NULL,
   `USERID` varchar(256) NOT NULL,
-  `account_id` bigint DEFAULT NULL,
+  `account_id` bigint(20) DEFAULT NULL,
   `attribute_id` varchar(256) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK_iam_saml_id_account_id` (`account_id`),
@@ -1642,13 +1613,13 @@ DROP TABLE IF EXISTS `iam_scope_policy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_scope_policy` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `creation_time` datetime NOT NULL,
   `description` varchar(512) DEFAULT NULL,
   `last_update_time` datetime NOT NULL,
   `rule` varchar(6) NOT NULL,
-  `account_id` bigint DEFAULT NULL,
-  `group_id` bigint DEFAULT NULL,
+  `account_id` bigint(20) DEFAULT NULL,
+  `group_id` bigint(20) DEFAULT NULL,
   `matching_policy` varchar(6) NOT NULL DEFAULT 'EQ',
   PRIMARY KEY (`ID`),
   KEY `FK_iam_scope_policy_group_id` (`group_id`),
@@ -1676,7 +1647,7 @@ DROP TABLE IF EXISTS `iam_scope_policy_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_scope_policy_scope` (
-  `policy_id` bigint DEFAULT NULL,
+  `policy_id` bigint(20) DEFAULT NULL,
   `scope` varchar(256) DEFAULT NULL,
   UNIQUE KEY `INDEX_iam_scope_policy_scope_policy_id_scope` (`policy_id`,`scope`),
   KEY `INDEX_iam_scope_policy_scope_scope` (`scope`),
@@ -1701,12 +1672,12 @@ DROP TABLE IF EXISTS `iam_ssh_key`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_ssh_key` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `fingerprint` varchar(48) NOT NULL,
   `LABEL` varchar(36) NOT NULL,
   `is_primary` tinyint(1) DEFAULT '0',
   `val` longtext,
-  `ACCOUNT_ID` bigint DEFAULT NULL,
+  `ACCOUNT_ID` bigint(20) DEFAULT NULL,
   `creation_time` datetime NOT NULL,
   `last_update_time` datetime NOT NULL,
   PRIMARY KEY (`ID`),
@@ -1733,12 +1704,12 @@ DROP TABLE IF EXISTS `iam_totp_mfa`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_totp_mfa` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `active` tinyint(1) NOT NULL DEFAULT '0',
   `secret` varchar(255) NOT NULL,
   `creation_time` datetime NOT NULL,
   `last_update_time` datetime NOT NULL,
-  `ACCOUNT_ID` bigint DEFAULT NULL,
+  `ACCOUNT_ID` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK_iam_totp_mfa_account_id` (`ACCOUNT_ID`),
   CONSTRAINT `FK_iam_totp_mfa_account_id` FOREIGN KEY (`ACCOUNT_ID`) REFERENCES `iam_account` (`ID`)
@@ -1763,9 +1734,9 @@ DROP TABLE IF EXISTS `iam_totp_recovery_code`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_totp_recovery_code` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `code` varchar(255) NOT NULL,
-  `totp_mfa_id` bigint NOT NULL,
+  `totp_mfa_id` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK_iam_totp_recovery_code_totp_mfa_id` (`totp_mfa_id`),
   CONSTRAINT `FK_iam_totp_recovery_code_totp_mfa_id` FOREIGN KEY (`totp_mfa_id`) REFERENCES `iam_totp_mfa` (`ID`)
@@ -1789,7 +1760,7 @@ DROP TABLE IF EXISTS `iam_user_info`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_user_info` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `BIRTHDATE` varchar(255) DEFAULT NULL,
   `EMAIL` varchar(128) NOT NULL,
   `EMAILVERIFIED` tinyint(1) DEFAULT '0',
@@ -1805,7 +1776,7 @@ CREATE TABLE `iam_user_info` (
   `PROFILE` varchar(255) DEFAULT NULL,
   `WEBSITE` varchar(255) DEFAULT NULL,
   `ZONEINFO` varchar(255) DEFAULT NULL,
-  `ADDRESS_ID` bigint DEFAULT NULL,
+  `ADDRESS_ID` bigint(20) DEFAULT NULL,
   `DTYPE` varchar(31) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `iui_em_idx` (`EMAIL`),
@@ -1833,21 +1804,21 @@ DROP TABLE IF EXISTS `iam_x509_cert`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_x509_cert` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `subject_dn` varchar(256) CHARACTER SET latin1 COLLATE latin1_general_cs DEFAULT NULL,
   `LABEL` varchar(36) NOT NULL,
   `is_primary` tinyint(1) DEFAULT '0',
-  `ACCOUNT_ID` bigint DEFAULT NULL,
+  `ACCOUNT_ID` bigint(20) DEFAULT NULL,
   `CERTIFICATE` text,
   `issuer_dn` varchar(256) CHARACTER SET latin1 COLLATE latin1_general_cs DEFAULT NULL,
   `creation_time` datetime NOT NULL,
   `last_update_time` datetime NOT NULL,
-  `proxy_id` bigint DEFAULT NULL,
+  `proxy_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`ID`),
+  UNIQUE KEY `subject_dn` (`subject_dn`),
   UNIQUE KEY `idx_iam_x509_cert_cerificate` (`CERTIFICATE`(256)),
   KEY `FK_iam_x509_cert_ACCOUNT_ID` (`ACCOUNT_ID`),
   KEY `FK_iam_x509_cert_proxy_id` (`proxy_id`),
-  KEY `idx_subject_dn` (`subject_dn`),
   CONSTRAINT `FK_iam_x509_cert_ACCOUNT_ID` FOREIGN KEY (`ACCOUNT_ID`) REFERENCES `iam_account` (`ID`),
   CONSTRAINT `FK_iam_x509_cert_proxy_id` FOREIGN KEY (`proxy_id`) REFERENCES `iam_x509_proxy` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
@@ -1871,7 +1842,7 @@ DROP TABLE IF EXISTS `iam_x509_proxy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `iam_x509_proxy` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `CHAIN` longtext NOT NULL,
   `exp_time` datetime NOT NULL,
   PRIMARY KEY (`ID`),
@@ -1896,7 +1867,7 @@ DROP TABLE IF EXISTS `pairwise_identifier`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pairwise_identifier` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `identifier` varchar(256) DEFAULT NULL,
   `sub` varchar(256) DEFAULT NULL,
   `sector_identifier` varchar(2048) DEFAULT NULL,
@@ -1921,8 +1892,8 @@ DROP TABLE IF EXISTS `permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `permission` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `resource_set_id` bigint DEFAULT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `resource_set_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1944,7 +1915,7 @@ DROP TABLE IF EXISTS `permission_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `permission_scope` (
-  `owner_id` bigint NOT NULL,
+  `owner_id` bigint(20) NOT NULL,
   `scope` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1966,9 +1937,9 @@ DROP TABLE IF EXISTS `permission_ticket`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `permission_ticket` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ticket` varchar(256) NOT NULL,
-  `permission_id` bigint NOT NULL,
+  `permission_id` bigint(20) NOT NULL,
   `expiration` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -1991,9 +1962,9 @@ DROP TABLE IF EXISTS `policy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `policy` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(1024) DEFAULT NULL,
-  `resource_set_id` bigint DEFAULT NULL,
+  `resource_set_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2015,7 +1986,7 @@ DROP TABLE IF EXISTS `policy_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `policy_scope` (
-  `owner_id` bigint NOT NULL,
+  `owner_id` bigint(20) NOT NULL,
   `scope` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2037,13 +2008,12 @@ DROP TABLE IF EXISTS `refresh_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `refresh_token` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `token_value` varchar(4096) DEFAULT NULL,
   `expiration` timestamp NULL DEFAULT NULL,
-  `auth_holder_id` bigint DEFAULT NULL,
-  `client_id` bigint DEFAULT NULL,
+  `auth_holder_id` bigint(20) DEFAULT NULL,
+  `client_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `rt_tvh_idx` (`token_value`(767)),
   KEY `rf_ahi_idx` (`auth_holder_id`),
   KEY `FK_refresh_token_client_id` (`client_id`),
   CONSTRAINT `FK_refresh_token_auth_holder_id` FOREIGN KEY (`auth_holder_id`) REFERENCES `authentication_holder` (`id`) ON DELETE CASCADE,
@@ -2068,7 +2038,7 @@ DROP TABLE IF EXISTS `resource_set`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `resource_set` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(1024) NOT NULL,
   `uri` varchar(1024) DEFAULT NULL,
   `icon_uri` varchar(1024) DEFAULT NULL,
@@ -2096,7 +2066,7 @@ DROP TABLE IF EXISTS `resource_set_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `resource_set_scope` (
-  `owner_id` bigint NOT NULL,
+  `owner_id` bigint(20) NOT NULL,
   `scope` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2118,7 +2088,7 @@ DROP TABLE IF EXISTS `saved_registered_client`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `saved_registered_client` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `issuer` varchar(1024) DEFAULT NULL,
   `registered_client` varchar(8192) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -2142,7 +2112,7 @@ DROP TABLE IF EXISTS `saved_user_auth`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `saved_user_auth` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(1024) DEFAULT NULL,
   `authenticated` tinyint(1) DEFAULT NULL,
   `source_class` varchar(2048) DEFAULT NULL,
@@ -2167,7 +2137,7 @@ DROP TABLE IF EXISTS `saved_user_auth_authority`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `saved_user_auth_authority` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `authority` varchar(256) DEFAULT NULL,
   KEY `suaa_oi_idx` (`owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -2190,9 +2160,9 @@ DROP TABLE IF EXISTS `saved_user_auth_info`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `saved_user_auth_info` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `info_key` varchar(256) DEFAULT NULL,
-  `info_val` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `info_val` varchar(256) DEFAULT NULL,
   UNIQUE KEY `owner_id` (`owner_id`,`info_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2214,15 +2184,15 @@ DROP TABLE IF EXISTS `schema_version`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `schema_version` (
-  `installed_rank` int NOT NULL,
+  `installed_rank` int(11) NOT NULL,
   `version` varchar(50) DEFAULT NULL,
   `description` varchar(200) NOT NULL,
   `type` varchar(20) NOT NULL,
   `script` varchar(1000) NOT NULL,
-  `checksum` int DEFAULT NULL,
+  `checksum` int(11) DEFAULT NULL,
   `installed_by` varchar(100) NOT NULL,
   `installed_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `execution_time` int NOT NULL,
+  `execution_time` int(11) NOT NULL,
   `success` tinyint(1) NOT NULL,
   PRIMARY KEY (`installed_rank`),
   KEY `schema_version_s_idx` (`success`)
@@ -2235,7 +2205,7 @@ CREATE TABLE `schema_version` (
 
 LOCK TABLES `schema_version` WRITE;
 /*!40000 ALTER TABLE `schema_version` DISABLE KEYS */;
-INSERT INTO `schema_version` VALUES (1,'1',' init','SQL','V1___init.sql',-673105977,'iam','2024-03-01 10:57:07',1904,1),(2,'2',' iam tables','SQL','V2___iam_tables.sql',916872168,'iam','2024-03-01 10:57:08',1239,1),(3,'3',' basic configuration','SQL','V3__basic_configuration.sql',1293553913,'iam','2024-03-01 10:57:08',24,1),(4,'3.1',' duplicate email user','SQL','V3_1___duplicate_email_user.sql',-754234138,'iam','2024-03-01 10:57:08',14,1),(5,'4',' x509 updates','SQL','V4___x509_updates.sql',803590936,'iam','2024-03-01 10:57:08',69,1),(6,'5',' registration request','SQL','V5___registration_request.sql',844204664,'iam','2024-03-01 10:57:09',275,1),(7,'6',' remove wrong constraints','SQL','V6___remove_wrong_constraints.sql',2003434964,'iam','2024-03-01 10:57:09',49,1),(8,'7',' notification tables','SQL','V7___notification_tables.sql',-1136933843,'iam','2024-03-01 10:57:09',381,1),(9,'8',' mitre update','SQL','V8___mitre_update.sql',608617254,'iam','2024-03-01 10:57:09',88,1),(10,'9','mitre saved user authn changes','SQL','V9__mitre_saved_user_authn_changes.sql',302744444,'iam','2024-03-01 10:57:09',38,1),(11,'10','fix internal authz scopes','SQL','V10__fix_internal_authz_scopes.sql',-686432566,'iam','2024-03-01 10:57:09',6,1),(12,'10.1','Password Update','JDBC','db.migration.mysql.V10_1__Password_Update',NULL,'iam','2024-03-01 10:57:10',774,1),(13,'10.2',' CheckDuplicateEmails','JDBC','db.migration.mysql.V10_2___CheckDuplicateEmails',NULL,'iam','2024-03-01 10:57:10',11,1),(14,'11','fix base scim and reg scopes','SQL','V11__fix_base_scim_and_reg_scopes.sql',-2106952067,'iam','2024-03-01 10:57:10',1,1),(15,'11.1','no attr id saml account for admin user','SQL','V11_1__no_attr_id_saml_account_for_admin_user.sql',-448912898,'iam','2024-03-01 10:57:10',1,1),(16,'12','iam group nested groups','SQL','V12__iam_group_nested_groups.sql',-2140651111,'iam','2024-03-01 10:57:10',191,1),(17,'13','add attribute id to saml id table','SQL','V13__add_attribute_id_to_saml_id_table.sql',681840221,'iam','2024-03-01 10:57:11',307,1),(18,'14',' x509 certs table changes','SQL','V14___x509_certs_table_changes.sql',-310236366,'iam','2024-03-01 10:57:11',477,1),(19,'15','alter iam group','SQL','V15__alter_iam_group.sql',588116562,'iam','2024-03-01 10:57:11',99,1),(20,'16','add provisioned column to iam account','SQL','V16__add_provisioned_column_to_iam_account.sql',448586794,'iam','2024-03-01 10:57:12',414,1),(21,'17','add scope policy tables','SQL','V17__add_scope_policy_tables.sql',460278210,'iam','2024-03-01 10:57:12',752,1),(22,'18','mitre 1 3 x database changes','SQL','V18__mitre_1_3_x_database_changes.sql',449297336,'iam','2024-03-01 10:57:13',621,1),(23,'19','aup tables','SQL','V19__aup_tables.sql',567653912,'iam','2024-03-01 10:57:13',286,1),(24,'20','group membership request','SQL','V20__group_membership_request.sql',-924931434,'iam','2024-03-01 10:57:14',229,1),(25,'21',' device code default expiration','SQL','V21___device_code_default_expiration.sql',965164897,'iam','2024-03-01 10:57:14',1,1),(26,'22','add indexes for search queries','SQL','V22__add_indexes_for_search_queries.sql',-748445998,'iam','2024-03-01 10:57:14',219,1),(27,'23',' CreateGroupManagerAuthorities','JDBC','db.migration.mysql.V23___CreateGroupManagerAuthorities',NULL,'iam','2024-03-01 10:57:14',3,1),(28,'24',' set timestamp default','SQL','V24___set_timestamp_default.sql',234306337,'iam','2024-03-01 10:57:14',7,1),(29,'30',' default group support','SQL','V30___default_group_support.sql',-636476445,'iam','2024-03-01 10:57:15',1005,1),(30,'31',' address table fixes','SQL','V31___address_table_fixes.sql',323916075,'iam','2024-03-01 10:57:15',165,1),(31,'32',' proxy storage','SQL','V32___proxy_storage.sql',851904690,'iam','2024-03-01 10:57:15',253,1),(32,'33',' proxy api scopes','SQL','V33___proxy_api_scopes.sql',-394160567,'iam','2024-03-01 10:57:15',2,1),(33,'34',' req request labels','SQL','V34___req_request_labels.sql',-1247430935,'iam','2024-03-01 10:57:16',201,1),(34,'34.2',' RemoveOrphanTokens','JDBC','db.migration.mysql.V34_2___RemoveOrphanTokens',NULL,'iam','2024-03-01 10:57:16',8,1),(35,'35',' scope match policies','SQL','V35___scope_match_policies.sql',773238492,'iam','2024-03-01 10:57:16',254,1),(36,'40',' aup updates','SQL','V40___aup_updates.sql',-1574961084,'iam','2024-03-01 10:57:16',136,1),(37,'50',' token exchange policy','SQL','V50___token_exchange_policy.sql',708363568,'iam','2024-03-01 10:57:16',169,1),(38,'51',' fix scope match policies','SQL','V51___fix_scope_match_policies.sql',1742199118,'iam','2024-03-01 10:57:16',3,1),(39,'52','add eduperson system scopes','SQL','V52__add_eduperson_system_scopes.sql',-669332083,'iam','2024-03-01 10:57:16',1,1),(40,'53',' add end time to iam acccount','SQL','V53___add_end_time_to_iam_acccount.sql',795128555,'iam','2024-03-01 10:57:16',196,1),(41,'60',' fix certificate subject length','SQL','V60___fix_certificate_subject_length.sql',437826198,'iam','2024-03-01 10:57:17',215,1),(42,'61',' add dates for group membership','SQL','V61___add_dates_for_group_membership.sql',-1216009527,'iam','2024-03-01 10:57:17',163,1),(43,'62',' add dates to ssh keys table','SQL','V62___add_dates_to_ssh_keys_table.sql',345904759,'iam','2024-03-01 10:57:17',162,1),(44,'70',' totp mfa','SQL','V70___totp_mfa.sql',358166160,'iam','2024-03-01 10:57:17',266,1),(45,'71',' add pre authenticated authority','SQL','V71___add_pre_authenticated_authority.sql',234328656,'iam','2024-03-01 10:57:17',1,1),(46,'80',' account clients','SQL','V80___account_clients.sql',-2130998179,'iam','2024-03-01 10:57:18',275,1),(47,'81','add eduperson assurance scope','SQL','V81__add_eduperson_assurance_scope.sql',1118450873,'iam','2024-03-01 10:57:18',2,1),(48,'81.2',' RemoveOrphanTokens','JDBC','db.migration.mysql.V81_2___RemoveOrphanTokens',NULL,'iam','2024-03-01 10:57:18',2,1),(49,'90','fix eduperson entitlement scope','SQL','V90__fix_eduperson_entitlement_scope.sql',-543114581,'iam','2024-03-01 10:57:18',0,1),(50,'91','update client name','SQL','V91__update_client_name.sql',-113175668,'iam','2024-03-01 10:57:18',0,1),(51,'92','add iam api scopes','SQL','V92__add_iam_api_scopes.sql',1959900565,'iam','2024-03-01 10:57:18',0,1),(52,'93','add at hash','SQL','V93__add_at_hash.sql',-881840384,'iam','2024-03-01 10:57:18',267,1),(53,'94','alter x509 table','SQL','V94__alter_x509_table.sql',1887482211,'iam','2024-03-01 10:57:18',223,1),(54,'95','remove client response type','SQL','V95__remove_client_response_type.sql',-658578857,'iam','2024-03-01 10:57:18',1,1),(55,'96','add foreign keys','SQL','V96__add_foreign_keys.sql',-969456599,'iam','2024-03-01 10:57:22',3372,1),(56,'100000',' test data','SQL','V100000___test_data.sql',-1939741802,'iam','2024-03-01 10:57:22',116,1),(57,'100000.1',' CreateGroupManagerAuthorities','JDBC','db.migration.test.V100000_1___CreateGroupManagerAuthorities',NULL,'iam','2024-03-01 10:57:22',5,1),(58,'100000.3',' RemoveOrphanTokens','JDBC','db.migration.test.V100000_3___RemoveOrphanTokens',NULL,'iam','2024-03-01 10:57:22',3,1),(59,'100000.4',' remove data after orphan tokens test','SQL','V100000_4___remove_data_after_orphan_tokens_test.sql',-1771356196,'iam','2024-03-01 10:57:22',2,1),(60,'100000.6','add eduperson scopes to client','SQL','V100000_6__add_eduperson_scopes_to_client.sql',-1405718810,'iam','2024-03-01 10:57:22',0,1),(61,'100000.7','fix eduperson entitlement scope','SQL','V100000_7__fix_eduperson_entitlement_scope.sql',-880050935,'iam','2024-03-01 10:57:22',0,1),(62,'3.1',' duplicate email user','DELETE','V3_1___duplicate_email_user.sql',-754234138,'iam','2025-05-03 02:38:12',0,1),(63,'11.1','no attr id saml account for admin user','DELETE','V11_1__no_attr_id_saml_account_for_admin_user.sql',-448912898,'iam','2025-05-03 02:38:12',0,1),(64,'100000',' test data','DELETE','V100000___test_data.sql',-1939741802,'iam','2025-05-03 02:38:12',0,1),(65,'100000.1',' CreateGroupManagerAuthorities','DELETE','db.migration.test.V100000_1___CreateGroupManagerAuthorities',NULL,'iam','2025-05-03 02:38:12',0,1),(66,'100000.3',' RemoveOrphanTokens','DELETE','db.migration.test.V100000_3___RemoveOrphanTokens',NULL,'iam','2025-05-03 02:38:12',0,1),(67,'100000.4',' remove data after orphan tokens test','DELETE','V100000_4___remove_data_after_orphan_tokens_test.sql',-1771356196,'iam','2025-05-03 02:38:12',0,1),(68,'100000.6','add eduperson scopes to client','DELETE','V100000_6__add_eduperson_scopes_to_client.sql',-1405718810,'iam','2025-05-03 02:38:12',0,1),(69,'100000.7','fix eduperson entitlement scope','DELETE','V100000_7__fix_eduperson_entitlement_scope.sql',-880050935,'iam','2025-05-03 02:38:12',0,1),(70,'97','delete unique subject dn','SQL','V97__delete_unique_subject_dn.sql',1120054453,'iam','2025-05-03 02:38:12',38,1),(71,'98','fix rat hash value','SQL','V98__fix_rat_hash_value.sql',228664475,'iam','2025-05-03 02:38:12',4,1),(72,'99','clear client logo URI','SQL','V99__clear_client_logo_URI.sql',906005557,'iam','2025-05-03 02:38:12',10,1),(73,'100','alter saved user auth info table','SQL','V100__alter_saved_user_auth_info_table.sql',133009300,'iam','2025-05-03 02:38:12',39,1),(74,'101','add refresh token value index','SQL','V101__add_refresh_token_value_index.sql',-869693560,'iam','2025-05-03 02:38:12',15,1),(75,'102','client last used','SQL','V102__client_last_used.sql',606358214,'iam','2025-05-03 02:38:12',52,1),(76,'103','add active and status changed on to client details','SQL','V103__add_active_and_status_changed_on_to_client_details.sql',-1930375181,'iam','2025-05-03 02:38:12',39,1),(77,'104','set default active client status','SQL','V104__set_default_active_client_status.sql',794926784,'iam','2025-05-03 02:38:12',23,1),(78,'105','add aup reminders','SQL','V105__add_aup_reminders.sql',-1667681670,'iam','2025-05-03 02:38:12',18,1);
+INSERT INTO `schema_version` VALUES (1,'1',' init','SQL','V1___init.sql',-673105977,'iam','2024-03-01 10:57:07',1904,1),(2,'2',' iam tables','SQL','V2___iam_tables.sql',916872168,'iam','2024-03-01 10:57:08',1239,1),(3,'3','basic configuration','SQL','V3__basic_configuration.sql',-1952954691,'iam','2024-03-01 10:57:08',24,1),(4,'3.1',' duplicate email user','SQL','V3_1___duplicate_email_user.sql',-754234138,'iam','2024-03-01 10:57:08',14,1),(5,'4',' x509 updates','SQL','V4___x509_updates.sql',803590936,'iam','2024-03-01 10:57:08',69,1),(6,'5',' registration request','SQL','V5___registration_request.sql',844204664,'iam','2024-03-01 10:57:09',275,1),(7,'6',' remove wrong constraints','SQL','V6___remove_wrong_constraints.sql',2003434964,'iam','2024-03-01 10:57:09',49,1),(8,'7',' notification tables','SQL','V7___notification_tables.sql',-1136933843,'iam','2024-03-01 10:57:09',381,1),(9,'8',' mitre update','SQL','V8___mitre_update.sql',608617254,'iam','2024-03-01 10:57:09',88,1),(10,'9','mitre saved user authn changes','SQL','V9__mitre_saved_user_authn_changes.sql',302744444,'iam','2024-03-01 10:57:09',38,1),(11,'10','fix internal authz scopes','SQL','V10__fix_internal_authz_scopes.sql',-686432566,'iam','2024-03-01 10:57:09',6,1),(12,'10.1','Password Update','JDBC','db.migration.mysql.V10_1__Password_Update',NULL,'iam','2024-03-01 10:57:10',774,1),(13,'10.2',' CheckDuplicateEmails','JDBC','db.migration.mysql.V10_2___CheckDuplicateEmails',NULL,'iam','2024-03-01 10:57:10',11,1),(14,'11','fix base scim and reg scopes','SQL','V11__fix_base_scim_and_reg_scopes.sql',-2106952067,'iam','2024-03-01 10:57:10',1,1),(15,'11.1','no attr id saml account for admin user','SQL','V11_1__no_attr_id_saml_account_for_admin_user.sql',-448912898,'iam','2024-03-01 10:57:10',1,1),(16,'12','iam group nested groups','SQL','V12__iam_group_nested_groups.sql',-2140651111,'iam','2024-03-01 10:57:10',191,1),(17,'13','add attribute id to saml id table','SQL','V13__add_attribute_id_to_saml_id_table.sql',681840221,'iam','2024-03-01 10:57:11',307,1),(18,'14',' x509 certs table changes','SQL','V14___x509_certs_table_changes.sql',-310236366,'iam','2024-03-01 10:57:11',477,1),(19,'15','alter iam group','SQL','V15__alter_iam_group.sql',588116562,'iam','2024-03-01 10:57:11',99,1),(20,'16','add provisioned column to iam account','SQL','V16__add_provisioned_column_to_iam_account.sql',448586794,'iam','2024-03-01 10:57:12',414,1),(21,'17','add scope policy tables','SQL','V17__add_scope_policy_tables.sql',460278210,'iam','2024-03-01 10:57:12',752,1),(22,'18','mitre 1 3 x database changes','SQL','V18__mitre_1_3_x_database_changes.sql',449297336,'iam','2024-03-01 10:57:13',621,1),(23,'19','aup tables','SQL','V19__aup_tables.sql',567653912,'iam','2024-03-01 10:57:13',286,1),(24,'20','group membership request','SQL','V20__group_membership_request.sql',-924931434,'iam','2024-03-01 10:57:14',229,1),(25,'21',' device code default expiration','SQL','V21___device_code_default_expiration.sql',965164897,'iam','2024-03-01 10:57:14',1,1),(26,'22','add indexes for search queries','SQL','V22__add_indexes_for_search_queries.sql',-748445998,'iam','2024-03-01 10:57:14',219,1),(27,'23',' CreateGroupManagerAuthorities','JDBC','db.migration.mysql.V23___CreateGroupManagerAuthorities',NULL,'iam','2024-03-01 10:57:14',3,1),(28,'24',' set timestamp default','SQL','V24___set_timestamp_default.sql',234306337,'iam','2024-03-01 10:57:14',7,1),(29,'30',' default group support','SQL','V30___default_group_support.sql',-636476445,'iam','2024-03-01 10:57:15',1005,1),(30,'31',' address table fixes','SQL','V31___address_table_fixes.sql',323916075,'iam','2024-03-01 10:57:15',165,1),(31,'32',' proxy storage','SQL','V32___proxy_storage.sql',851904690,'iam','2024-03-01 10:57:15',253,1),(32,'33',' proxy api scopes','SQL','V33___proxy_api_scopes.sql',-394160567,'iam','2024-03-01 10:57:15',2,1),(33,'34',' req request labels','SQL','V34___req_request_labels.sql',-1247430935,'iam','2024-03-01 10:57:16',201,1),(34,'34.2',' RemoveOrphanTokens','JDBC','db.migration.mysql.V34_2___RemoveOrphanTokens',NULL,'iam','2024-03-01 10:57:16',8,1),(35,'35',' scope match policies','SQL','V35___scope_match_policies.sql',773238492,'iam','2024-03-01 10:57:16',254,1),(36,'40',' aup updates','SQL','V40___aup_updates.sql',-1574961084,'iam','2024-03-01 10:57:16',136,1),(37,'50',' token exchange policy','SQL','V50___token_exchange_policy.sql',708363568,'iam','2024-03-01 10:57:16',169,1),(38,'51',' fix scope match policies','SQL','V51___fix_scope_match_policies.sql',1742199118,'iam','2024-03-01 10:57:16',3,1),(39,'52','add eduperson system scopes','SQL','V52__add_eduperson_system_scopes.sql',-669332083,'iam','2024-03-01 10:57:16',1,1),(40,'53',' add end time to iam acccount','SQL','V53___add_end_time_to_iam_acccount.sql',795128555,'iam','2024-03-01 10:57:16',196,1),(41,'60',' fix certificate subject length','SQL','V60___fix_certificate_subject_length.sql',437826198,'iam','2024-03-01 10:57:17',215,1),(42,'61',' add dates for group membership','SQL','V61___add_dates_for_group_membership.sql',-1216009527,'iam','2024-03-01 10:57:17',163,1),(43,'62',' add dates to ssh keys table','SQL','V62___add_dates_to_ssh_keys_table.sql',345904759,'iam','2024-03-01 10:57:17',162,1),(44,'70',' totp mfa','SQL','V70___totp_mfa.sql',358166160,'iam','2024-03-01 10:57:17',266,1),(45,'71',' add pre authenticated authority','SQL','V71___add_pre_authenticated_authority.sql',234328656,'iam','2024-03-01 10:57:17',1,1),(46,'80',' account clients','SQL','V80___account_clients.sql',-2130998179,'iam','2024-03-01 10:57:18',275,1),(47,'81','add eduperson assurance scope','SQL','V81__add_eduperson_assurance_scope.sql',1118450873,'iam','2024-03-01 10:57:18',2,1),(48,'81.2',' RemoveOrphanTokens','JDBC','db.migration.mysql.V81_2___RemoveOrphanTokens',NULL,'iam','2024-03-01 10:57:18',2,1),(49,'90','fix eduperson entitlement scope','SQL','V90__fix_eduperson_entitlement_scope.sql',-543114581,'iam','2024-03-01 10:57:18',0,1),(50,'91','update client name','SQL','V91__update_client_name.sql',-113175668,'iam','2024-03-01 10:57:18',0,1),(51,'92','add iam api scopes','SQL','V92__add_iam_api_scopes.sql',1959900565,'iam','2024-03-01 10:57:18',0,1),(52,'93','add at hash','SQL','V93__add_at_hash.sql',-881840384,'iam','2024-03-01 10:57:18',267,1),(53,'94','alter x509 table','SQL','V94__alter_x509_table.sql',1887482211,'iam','2024-03-01 10:57:18',223,1),(54,'95','remove client response type','SQL','V95__remove_client_response_type.sql',-658578857,'iam','2024-03-01 10:57:18',1,1),(55,'96','add foreign keys','SQL','V96__add_foreign_keys.sql',-969456599,'iam','2024-03-01 10:57:22',3372,1),(56,'100000',' test data','SQL','V100000___test_data.sql',-1939741802,'iam','2024-03-01 10:57:22',116,1),(57,'100000.1',' CreateGroupManagerAuthorities','JDBC','db.migration.test.V100000_1___CreateGroupManagerAuthorities',NULL,'iam','2024-03-01 10:57:22',5,1),(58,'100000.3',' RemoveOrphanTokens','JDBC','db.migration.test.V100000_3___RemoveOrphanTokens',NULL,'iam','2024-03-01 10:57:22',3,1),(59,'100000.4',' remove data after orphan tokens test','SQL','V100000_4___remove_data_after_orphan_tokens_test.sql',-1771356196,'iam','2024-03-01 10:57:22',2,1),(60,'100000.6','add eduperson scopes to client','SQL','V100000_6__add_eduperson_scopes_to_client.sql',-1405718810,'iam','2024-03-01 10:57:22',0,1),(61,'100000.7','fix eduperson entitlement scope','SQL','V100000_7__fix_eduperson_entitlement_scope.sql',-880050935,'iam','2024-03-01 10:57:22',0,1);
 /*!40000 ALTER TABLE `schema_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2247,7 +2217,7 @@ DROP TABLE IF EXISTS `system_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `system_scope` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `scope` varchar(256) NOT NULL,
   `description` varchar(4096) DEFAULT NULL,
   `icon` varchar(256) DEFAULT NULL,
@@ -2278,7 +2248,7 @@ DROP TABLE IF EXISTS `token_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `token_scope` (
-  `owner_id` bigint NOT NULL,
+  `owner_id` bigint(20) NOT NULL,
   `scope` varchar(2048) NOT NULL,
   KEY `ts_oi_idx` (`owner_id`),
   CONSTRAINT `FK_token_scope_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `access_token` (`id`) ON DELETE CASCADE
@@ -2302,7 +2272,7 @@ DROP TABLE IF EXISTS `user_info`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_info` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `sub` varchar(256) DEFAULT NULL,
   `preferred_username` varchar(256) DEFAULT NULL,
   `name` varchar(256) DEFAULT NULL,
@@ -2345,7 +2315,7 @@ DROP TABLE IF EXISTS `whitelisted_site`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `whitelisted_site` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `creator_user_id` varchar(256) DEFAULT NULL,
   `client_id` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -2369,7 +2339,7 @@ DROP TABLE IF EXISTS `whitelisted_site_scope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `whitelisted_site_scope` (
-  `owner_id` bigint DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   `scope` varchar(256) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2392,4 +2362,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-03  4:57:04
+-- Dump completed on 2024-03-01 12:02:05
