@@ -39,7 +39,7 @@ Ask for a VO proxy with
 ```bash
 $ voms-proxy-init -voms indigo-dc
 Enter GRID pass phrase for this identity:
-Contacting voms.test.example:8443 [/C=IT/O=IGI/CN=test.test.example] "indigo-dc"...
+Contacting voms.test.example:8443 [/C=IT/O=IGI/CN=voms.test.example] "indigo-dc"...
 Remote VOMS server contacted succesfully.
 
 
