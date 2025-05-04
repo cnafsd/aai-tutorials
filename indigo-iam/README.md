@@ -1,9 +1,15 @@
 # Docker compose for INDIGO IAM
 
+Build the trustanchor
+
+```bash
+docker compose build --no-cache trust
+```
+
 Run the services with
 
 ```bash
-docker compose up --build -d
+docker compose up -d
 ```
 
 The docker-compose contains several services:

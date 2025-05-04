@@ -1,15 +1,15 @@
-<!--
-SPDX-FileCopyrightText: 2014 Istituto Nazionale di Fisica Nucleare
-
-SPDX-License-Identifier: Apache-2.0
--->
-
 # Docker compose for StoRM WebDAV
 
-Run the compose with
+Build the trustanchor
 
 ```bash
-docker compose up --build -d
+docker compose build --no-cache trust
+```
+
+Run the services with
+
+```bash
+docker compose up -d
 ```
 
 The docker-compose file contains the next services:
