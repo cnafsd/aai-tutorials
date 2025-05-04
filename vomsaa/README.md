@@ -3,7 +3,7 @@
 Run the services with
 
 ```bash
-docker compose up -d
+docker compose up --build -d
 ```
 
 The docker-compose contains several services:
@@ -29,7 +29,7 @@ Thus, the `clients` container allows you to directly ask voms-aa for AC extensio
 Enter in the container with
 
 ```bash
-docker-compose exec clients bash
+docker compose exec clients bash
 ```
 
 Set the user certificates with (file permissions have been already properly set by (setup-trust.sh)[../trust/c509/setup-trust.sh])

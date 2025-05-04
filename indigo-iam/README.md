@@ -3,7 +3,7 @@
 Run the services with
 
 ```bash
-docker compose up -d
+docker compose up --build -d
 ```
 
 The docker-compose contains several services:
@@ -41,7 +41,7 @@ In order to trust the server certificate, you must to provide the browser with t
 You can find it in
 
 ```bash
-docker-compose exec iam-be bash
+docker compose exec iam-be bash
 cat /etc/grid-security/certificates/igi_test_ca.pem     # Copy and paste this
 ```
 
