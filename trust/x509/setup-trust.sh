@@ -78,4 +78,5 @@ install_ca.sh igi_test_ca "${ta_dir}"
 
 # Add igi-test-ca to system certificates
 ca_bundle="${ca_bundle_prefix}"/tls/certs
+echo -e "\n# igi-test-ca" >> "${ca_bundle}"/ca-bundle.crt
 cat "${ta_dir}"/igi_test_ca.pem >> "${ca_bundle}"/ca-bundle.crt

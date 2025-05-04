@@ -420,10 +420,10 @@ gfal-cat error: 2 (No such file or directory) - Result HTTP 404 : File not found
 
 #### JWT optional group
 
-Create an access token [IAM DEV](https://iam-dev.cloud.cnaf.infn.it), with the WLCG optional group `/dev/webdav`
+Create an access token from `iam`, with the WLCG optional group `/indigo-dc/webdav`
 
 ```bash
-AT=$(oidc-token -s wlcg.groups -s wlcg.groups:/dev/webdav ${OIDC_AGENT_ALIAS})
+AT=$(oidc-token -s wlcg.groups -s wlcg.groups:/indigo-dc/webdav ${OIDC_AGENT_ALIAS})
 ```
 
 and cross-check that it is listed among the groups within the _wlcg.group_ claim (note that it was not appearing when not explicitely requested)
@@ -471,7 +471,7 @@ Testing the fine grained SA permissions
 
 #### Generic JWT
 
-Use a generic token with minimum privileges issued by [IAM DEV](https://iam-dev.cloud.cnaf.infn.it)
+Use a generic token with minimum privileges issued by `iam`
 
 ```bash
 AT=$(oidc-token -s openid ${OIDC_AGENT_ALIAS})
@@ -503,7 +503,7 @@ gfal-rm error: 1 (Operation not permitted) - DavPosix::unlink  HTTP 403 : Permis
 The Bearer Token is sent to StoRM WebDAV through the HTTP header, means that to create/read/delete the file we could just use curl
 
 ```bash
-$ AT=$(oidc-token -s wlcg.groups:/dev/webdav dev-wlcg)
+$ AT=$(oidc-token -s wlcg.groups:/indigo-dc/webdav ${OIDC_AGENT_ALIAS})
 $ curl -H "Authorization: Bearer $AT" https://storm.test.example:8443/fga/fga_testing_curl -XPUT --upload-file fga_testing -w '%{http_code}\n'
 201
 $ curl -H "Authorization: Bearer $AT" https://storm.test.example:8443/fga/fga_testing_curl

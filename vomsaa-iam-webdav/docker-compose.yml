@@ -2,6 +2,7 @@ volumes:
   db_data:
   trustanchors:
   cabundle:
+  alpineBundle:
   vomsdir:
   certs:
   storage:
@@ -35,6 +36,7 @@ services:
     volumes:
       - trustanchors:/trust-anchors
       - cabundle:/etc/pki
+      - alpineBundle:/etc/pki/tls
       - certs:/certs
       - vomsdir:/vomsdir
 
@@ -178,6 +180,10 @@ services:
       - ./webdav/etc/storm/webdav/sa.d/:/etc/storm/webdav/sa.d/:ro
       - ./webdav/etc/storm/webdav/config/application-policies.yml:/app/application-policies.yml:ro
       - ./webdav/etc/storm/webdav/config/application-issuers.yml:/app/application-issuers.yml:ro
+      - ./webdav/scripts:/scripts:ro
+
+
+    entrypoint: /scripts/setup-and-start.sh
 
     networks:
       default:
