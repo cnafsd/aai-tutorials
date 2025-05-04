@@ -2,14 +2,17 @@
 
 This folder holds a trustanchor container which populates volumes
 that can be mounted in the other services such to establish a trust 
-framework based on X.509 server/user certificates created on-the-fly.
+framework based on X.509 certificates created on-the-fly.
 
-VOMS proxies are also created.
+Some proxy with different VOMS extensions are available in the container.
+They have been self-created, through `voms-proxy-fake`, meaning without
+the interaction with a VOMS server.
 
-In partular, it populates the following volumes
+The trustanchor container populates the following volumes
 
-* `/trust-anchors`: contains the `igi-test-ca` certificate (created
-  on-the-fly), which is usually mounted in `/etc/grid-security/certificates`
+* `/trust-anchors`: contains the `igi-test-ca` CA certificate, issuing X.509
+  server/user certificates (created on-the-fly), which is usually mounted
+  in `/etc/grid-security/certificates`
 * `/etc/pki/tls/certs`: it is the bundle for system certificates plus
   the `igi-test-ca` one
 * `/vomsdir`: contains the LSC files used to validate the proxy attributes,
@@ -25,12 +28,11 @@ More user/server X.509 certificates and VOMS proxies can be generated with custo
 
 The [setup-trust.sh](./x509/setup-trust.sh) script must be updated as well if
 
-* adding a server certificate (`make_cert` and set proper permissions)
-* adding a user certificate which is not using the pattern `test<nb>` (`make_cert` and set proper permissions)
-* adding a VOMS proxy not issued by an already defined VO (you need to create the proper LSC file).
+* adding a server certificate (i.e. `make_cert` and set proper permissions)
+* adding a user certificate which is not using the pattern `test<nb>` (i.e. `make_cert` and set proper permissions)
+* adding a VOMS proxy not issued by an already defined VO (i.e. you need to create the proper LSC file).
 
-**Tip:** Some docker versions use a buildx image which caches some layer of the build image to speedup the container start time. This is in conflict with the creation with on-the-fly certificates. To disable this behavior, first
-stop the container
+**Tip:** Some docker version uses a buildx image which caches some layer of the build image to speedup the container start time. This is in conflict with the creation of on-the-fly certificates. To disable this behavior, first stop and remove the container
 
 ```bash
 $ docker ps

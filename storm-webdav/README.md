@@ -14,7 +14,7 @@ docker compose up --build -d
 
 The docker-compose file contains the next services:
 
-* `trust`: docker image for the GRID CA certificates, mounted in the `/etc/grid-security/certificates` path of the other services. The _igi-test-ca_ used in this deployment is also present in that path
+* `trust`: docker image for the GRID CA certificates, mounted in the `/etc/grid-security/certificates` path of the other services: the _igi-test-ca_ used in this deployment is also present in that path. The container populates a `/certs` volume containing server/user X.509 certificates and VOMS proxies, self-emitted through `voms-proxy-fake` (without the interaction with a VOMS server)
 * `storage-setup`: sidecar container, used to allocate proper volumes (i.e. storage areas) owned by _storm_
 * `webdav`: is the main service, also known as StoRM WebDAV. The StoRM WebDAV base URL is https://storm.test.example:8443. It serves the following storage areas:
   * `test.vo` for users presenting a proxy issued by a _test.vo_ VO
@@ -43,7 +43,7 @@ To perform tests with GRID clients, enter in the container
 docker-compose exec client bash
 ```
 
-Some proxy with different VOMS extensions are available in the container
+Some proxy with different VOMS extensions are available in the container (self-created, through `voms-proxy-fake`, meaning without the interaction with a VOMS server)
 
 ```bash
 $ ls -l /certs/x509up_*

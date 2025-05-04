@@ -8,7 +8,7 @@ docker compose up -d
 
 The docker-compose contains several services:
 
-* `trust`: docker image for the GRID CA certificates, mounted in the `/etc/grid-security/certificates` path of the other services. The _igi-test-ca_ used in this deployment is also present in that path
+* `trust`: docker image for the GRID CA certificates, mounted in the `/etc/grid-security/certificates` path of the other services: the _igi-test-ca_ used in this deployment is also present in that path. The container populates a `/certs` volume containing server X.509 certificates
 * `iam-be`: is the main service, also known as `iam-login-service`. The INDIGO IAM base URL is https://iam.test.example
 * `client`: is an example of a client application (also known as `iam-test-client`), where a login button redirects to `iam-be` to start an authorization code flow. URL of this service is https://iam.test.example/iam-test-client
 * `iam`: is an `nginx` image used for TLS termination and reverse proxy
