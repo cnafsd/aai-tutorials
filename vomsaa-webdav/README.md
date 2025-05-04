@@ -97,7 +97,7 @@ eval $(oidc-agent-service use)
 oidc-add --pw-env=OIDC_AGENT_SECRET ${OIDC_AGENT_ALIAS}
 ```
 
-### indigo-dc
+## indigo-dc
 
 The `indigo-dc` Storage Area (SA) allows to read/write any proxy signed by a `indigo-dc`.
 If not already done, copy the test0 certificates into the `~/.globus` directory and create a VOMS proxy with
@@ -137,7 +137,7 @@ Copying file:///home/test/testfile   [FAILED]  after 0s
 gfal-copy error: 1 (Operation not permitted) - DESTINATION OVERWRITE   HTTP 403 : Permission refused 
 ```
 
-### fga
+## fga
 
 This is a fine-grained SA, whose permissions are the following
 * read/write to `/fga/xfers` folder to `/dev/xfers` members (default IAM group) of [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) and users of `/indigo-dc/xfers` VOMS group
@@ -165,6 +165,8 @@ Create a test file
 ```bash
 echo "Testing the fine grained SA permissions" > fga_testing
 ```
+
+### VOMS proxy
 
 #### VOMS proxy with primary group
 
@@ -277,7 +279,7 @@ $ gfal-cat https://storm.test.example:8443/fga/fga_testing
 Testing the fine grained SA permissions
 ```
 
-#### VOMS proxy
+#### Generic VOMS proxy
 
 Now use the generic proxy signed by a `indigo-dc` VO
 
@@ -305,6 +307,8 @@ Now destroy the VOMS proxy
 ```bash
 voms-proxy-destroy
 ```
+
+### JWT
 
 #### JWT default group
 
@@ -444,7 +448,7 @@ $ gfal-cat https://storm.test.example:8443/fga/fga_testing_jwt
 Testing the fine grained SA permissions
 ```
 
-#### JWT
+#### Generic JWT
 
 Use a generic token with minimum privileges issued by [IAM DEV](https://iam-dev.cloud.cnaf.infn.it)
 
