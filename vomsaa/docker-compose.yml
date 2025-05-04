@@ -80,7 +80,7 @@ services:
         condition: service_healthy
 
     volumes:
-      - ./application-mysql-test.yml:/workspace/config/application-mysql-test.yml:ro
+      - ./application-mysql.yml:/workspace/config/application-mysql.yml:ro
       - certs:/certs:ro
       - trustanchors:/etc/grid-security/certificates
 
