@@ -4,6 +4,7 @@ volumes:
   cabundle:
   vomsdir:
   certs:
+  storage:
 
 services:
 
@@ -137,6 +138,51 @@ services:
       - ./vomsaa/application-mysql.yml:/workspace/config/application-mysql.yml:ro
       - certs:/certs:ro
       - trustanchors:/etc/grid-security/certificates
+
+  storage-setup:
+    image: ${WEBDAV_IMAGE}:${WEBDAV_IMAGE_TAG}
+    environment:
+      TZ: UTC
+
+    volumes:
+      - storage:/storage
+      - ./webdav/scripts:/scripts:ro
+      - ./webdav/etc/storm/webdav/sa.d/:/etc/storm/webdav/sa.d/:ro
+    
+    user: root
+    entrypoint:
+      - /scripts/init-storage.sh
+
+  webdav:
+    image: ${WEBDAV_IMAGE}:${WEBDAV_IMAGE_TAG}
+    ports:
+      - "8443:8443"
+      - "8085:8085"
+
+    depends_on:
+      trust:
+        condition: service_completed_successfully
+      storage-setup:
+        condition: service_completed_successfully
+
+    env_file:
+      - ./webdav/webdav.env 
+
+    volumes:
+      - storage:/storage
+      - cabundle:/etc/pki
+      - trustanchors:/etc/grid-security/certificates
+      - certs:/etc/grid-security/storm-webdav/:ro 
+      - vomsdir:/etc/grid-security/vomsdir
+      - ./vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc
+      - ./webdav/etc/storm/webdav/sa.d/:/etc/storm/webdav/sa.d/:ro
+      - ./webdav/etc/storm/webdav/config/application-policies.yml:/app/application-policies.yml:ro
+      - ./webdav/etc/storm/webdav/config/application-issuers.yml:/app/application-issuers.yml:ro
+
+    networks:
+      default:
+        aliases:
+          - storm.test.example
           
   clients:
     image: ${GRID_CLIENTS_IMAGE}:${GRID_CLIENTS_IMAGE_TAG}
@@ -157,6 +203,8 @@ services:
       - certs:/certs
       - ./vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc
       - ./vomsaa/vomses:/etc/vomses
+      - ./scripts:/scripts:ro
+      - ./oidc-agent:/home/test/.config/oidc-agent
 
     entrypoint:  sleep infinity
 

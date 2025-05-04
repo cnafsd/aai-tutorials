@@ -1,0 +1,4 @@
+oauth:
+  issuers:
+    - name: iam
+      issuer: https://iam.test.example/

@@ -15,22 +15,25 @@ docker compose up -d
 The docker-compose contains several services:
 
 * `trust`: docker image for the _igi-test-ca_ CA certificates issuing server/user certificates, usually mounted in the `/etc/grid-security/certificates` path of the other services. The container populates a `/certs` volume containing server/user X.509 certificates
-* `nginx`: is the NGINX reverse proxy which forwards requests to the VOMS-AA microservice. URL of this service is https://voms.test.example:8445
+* `iam`: is an `nginx` image used for TLS termination and reverse proxy
+* `iam-be`: is the main service, also known as `iam-login-service`. The INDIGO IAM base URL is https://iam.test.example
+* `nginx-voms`: is the NGINX reverse proxy which forwards requests to the VOMS-AA microservice. URL of this service is https://voms.test.example:8443
 * `vomsaa`: is the VOMS-AA microservice which acts as VOMS Admin. It serves the `indigo-dc` VO
-* `db`: is a mysql database used by INDIGO IAM and VOMS-AA. A dump of the database with test users plus a _test0_ certificate linked to an account may be enabled. The test user also belong to the `indigo-dc` VO/IAM group, such that it can request for VOMS proxies
+* `db`: is a mysql database used by INDIGO IAM and VOMS-AA. A dump of the database with test users plus a _test0_ certificate linked to an account may be enabled. The test user also belong to the `indigo-dc` VO/IAM group, such that it can request for VOMS proxies (from the `vomsaa` service) and JWT tokens (from the `iam` service)
 * `storage-setup`: sidecar container, used to allocate proper volumes (i.e. storage areas) owned by _storm_
-* `webdav`: is the main service, also known as StoRM WebDAV. The StoRM WebDAV base URL is https://storm.test.example:8443. It serves the following storage areas:
+* `webdav`: is the StoRM WebDAV service. The base URL is https://storm.test.example:8443. It serves the following storage areas:
   * `indigo-dc` for users presenting a proxy issued by the `vomsaa` service (serving the `indigo-dc` VO)
-  * `test.vo` for users presenting a proxy issued by a _test.vo_ VO
   * `noauth`: which allows read/write mode also to anonymous users
   * `fga`: for a fined grained authorization storage area. Its access policies are set in the [application](./webdav/etc/storm/webdav/config/application-policies.yml) file
-  * `oauth-authz`: for users presenting a token issued by the [IAM DEV](https://iam-dev.cloud.cnaf.infn.it)
-* `clients`: is an image containing GRID clients (e.g. `voms-proxy-init`, `gfal`, `oidc-agent`, etc.) used to query the VOMS AA service.
+  * `oauth-authz`: for users presenting a token issued by the local `iam` service
+* `clients`: is an image containing GRID clients (e.g. `voms-proxy-init`, `gfal`, `oidc-agent`, etc.) used to query the local VOMS AA and IAM services.
+
+Basically, both iam and VOMS are local services, so there is no need to register your credentials elsewhere.
   
 To resolve the hostname of the services, add a line in your `/etc/hosts` file with
 
 ```
-127.0.0.1	voms.test.example   storm.test.example
+127.0.0.1	voms.test.example   iam.test.example   storm.test.example
 ```
 
 ## Setup credentials
@@ -86,20 +89,44 @@ uri       : voms.test.example:8080
 
 ### JWT
 
-This tutorial is provided with an `oidc-agent` client configuration (linked to [IAM DEV](https://iam-dev.cloud.cnaf.infn.it)) mounted in the `clients` container, but you should create a new one since the CLIENT_ID/SECRET MUST NOT be shared among users!
+This tutorial is provided with an `oidc-agent` client configuration (registered within the local `iam` service) mounted in the `clients` container. The CLIEN_ID and SECRET are saved in the db dump used in this compose.
 
 Set the following variable and add the client configuration to the `oidc-agent` service with
 
 ```bash
-export OIDC_AGENT_ALIAS=<alias-for-oidc-agent-client>
-export OIDC_AGENT_SECRET=<oidc-agent-client-secret>
+export OIDC_AGENT_ALIAS=test0
+export OIDC_AGENT_SECRET=password
 eval $(oidc-agent-service use)
 oidc-add --pw-env=OIDC_AGENT_SECRET ${OIDC_AGENT_ALIAS}
 ```
 
+Ask for a token with
+
+```bash
+$ oidc-token ${OIDC_AGENT_ALIAS} | cut -d. -f2 | base64 -d 2>/dev/null | jq .
+{
+  "wlcg.ver": "1.0",
+  "sub": "80e5fb8d-b7c8-451a-89ba-346ae278a66f",
+  "aud": "https://wlcg.cern.ch/jwt/v1/any",
+  "nbf": 1746377395,
+  "scope": "openid offline_access wlcg.groups",
+  "iss": "https://iam.test.example/",
+  "exp": 1746380995,
+  "iat": 1746377395,
+  "jti": "25f9facb-d77d-4c54-89ec-464152cb91db",
+  "client_id": "6a86717b-5153-4592-a636-2bf021694a58",
+  "wlcg.groups": [
+    "/Analysis",
+    "/Production",
+    "/indigo-dc",
+    "/indigo-dc/xfers"
+  ]
+}
+```
+
 ## indigo-dc
 
-The `indigo-dc` Storage Area (SA) allows to read/write any proxy signed by a `indigo-dc`.
+The `indigo-dc` Storage Area (SA) allows to read/write any proxy signed by a `indigo-dc` (i.e. the local `vomsaa`).
 If not already done, copy the test0 certificates into the `~/.globus` directory and create a VOMS proxy with
 
 ```bash
@@ -140,9 +167,9 @@ gfal-copy error: 1 (Operation not permitted) - DESTINATION OVERWRITE   HTTP 403 
 ## fga
 
 This is a fine-grained SA, whose permissions are the following
-* read/write to `/fga/xfers` folder to `/dev/xfers` members (default IAM group) of [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) and users of `/indigo-dc/xfers` VOMS group
-* read/write to SA to `/dev/webdav` members (optional IAM group) of [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) and users with VOMS role = webdav
-* read access to tokens issued by [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) and proxies signed by the `dev` and `indigo-dc` VOs
+* read/write to `/fga/xfers` folder to `/indigo-iam/xfers` members (default IAM group) of the `iam` local service and users of the `/indigo-dc/xfers` VOMS group (the AC is signed by the `vomsaa` local service)
+* read/write to the SA to `/indigo-dc/webdav` members (optional IAM group) and users with VOMS role = webdav
+* read access to tokens issued by `iam` and proxies signed by the `indigo-dc` VO
 * read access to anyone to the `/fga/public` folder and subfolders.
 
 Remove the proxy if you have one
@@ -312,63 +339,57 @@ voms-proxy-destroy
 
 #### JWT default group
 
-Create an access token issued by [IAM DEV](https://iam-dev.cloud.cnaf.infn.it), with the default WLCG groups
+Create an access token issued by `iam`, with the default WLCG groups
 
 ```bash
 AT=$(oidc-token -s wlcg.groups ${OIDC_AGENT_ALIAS})
 ```
 
-and cross check that the `/dev/xfers` is listed among the groups within the _wlcg.group_ claim
+and cross check that the `/indigo-dc/xfers` is listed among the groups within the _wlcg.group_ claim
 
 ```bash
 $ echo $AT | cut -d. -f2 | base64 -d 2>/dev/null | jq .
 {
   "wlcg.ver": "1.0",
-  "sub": "d331b9e3-c5bd-4e1c-a519-c9b93a093d0b",
+  "sub": "80e5fb8d-b7c8-451a-89ba-346ae278a66f",
   "aud": "https://wlcg.cern.ch/jwt/v1/any",
-  "nbf": 1746368097,
+  "nbf": 1746377814,
   "scope": "wlcg.groups",
-  "iss": "https://iam-dev.cloud.cnaf.infn.it/",
-  "exp": 1746371697,
-  "iat": 1746368097,
-  "jti": "fb971529-6751-4da8-9119-e6e0492c3d3e",
-  "client_id": "cf199b96-bec5-4f2e-a89c-e85d0dfdd8a5",
+  "iss": "https://iam.test.example/",
+  "exp": 1746381414,
+  "iat": 1746377814,
+  "jti": "7cfba15a-c3d1-4356-887d-6e33f13af3c1",
+  "client_id": "6a86717b-5153-4592-a636-2bf021694a58",
   "wlcg.groups": [
-    "/RootGroup",
-    "/cms",
-    "/cnafsd",
-    "/dev",
-    "/dev/xfers",
-    "/otello",
-    "/otello/editor"
+    "/Analysis",
+    "/Production",
+    "/indigo-dc",
+    "/indigo-dc/xfers"
   ]
 }
 ```
 
-Now ask for the `/dev/xfers` group to be the **primary** with
+Now ask for the `/indigo-dc/xfers` group to be the **primary** with
 
 ```bash
-$ AT=$(oidc-token -s wlcg.groups -s wlcg.groups:/dev/xfers ${OIDC_AGENT_ALIAS})
+$ AT=$(oidc-token -s wlcg.groups -s wlcg.groups:/indigo-dc/xfers ${OIDC_AGENT_ALIAS})
 $ echo $AT | cut -d. -f2 | base64 -d 2>/dev/null | jq .
 {
   "wlcg.ver": "1.0",
-  "sub": "d331b9e3-c5bd-4e1c-a519-c9b93a093d0b",
+  "sub": "80e5fb8d-b7c8-451a-89ba-346ae278a66f",
   "aud": "https://wlcg.cern.ch/jwt/v1/any",
-  "nbf": 1746368468,
-  "scope": "wlcg.groups:/dev/xfers wlcg.groups",
-  "iss": "https://iam-dev.cloud.cnaf.infn.it/",
-  "exp": 1746372068,
-  "iat": 1746368468,
-  "jti": "143ca821-410f-41b1-957c-13b28354f564",
-  "client_id": "cf199b96-bec5-4f2e-a89c-e85d0dfdd8a5",
+  "nbf": 1746377883,
+  "scope": "wlcg.groups:/indigo-dc/xfers wlcg.groups",
+  "iss": "https://iam.test.example/",
+  "exp": 1746381483,
+  "iat": 1746377883,
+  "jti": "ffc95ac6-114b-44fc-bbc6-5bc78382b63e",
+  "client_id": "6a86717b-5153-4592-a636-2bf021694a58",
   "wlcg.groups": [
-    "/dev/xfers",
-    "/RootGroup",
-    "/cms",
-    "/cnafsd",
-    "/dev",
-    "/otello",
-    "/otello/editor"
+    "/indigo-dc/xfers",
+    "/Analysis",
+    "/Production",
+    "/indigo-dc"
   ]
 }
 ```
