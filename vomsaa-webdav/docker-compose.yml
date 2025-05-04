@@ -1,0 +1,107 @@
+volumes:
+  db_data:
+  trustanchors:
+  cabundle:
+  vomsdir:
+  certs:
+
+services:
+
+  db:
+    image: ${DB_IMAGE}:${DB_IMAGE_TAG}
+    container_name: db
+    hostname: db
+    volumes:
+     - db_data:/var/lib/mysql
+     - ../iam-db/iam-test-dump.sql:/docker-entrypoint-initdb.d/iam-test-dump.sql
+    
+    env_file:
+      - ../iam-db/db.env
+
+    ports:
+      - "3307:3307"
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3307", "--silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 0s
+
+  trust:
+    build:
+      context: ../trust
+    volumes:
+      - trustanchors:/trust-anchors
+      - cabundle:/etc/pki
+      - certs:/certs
+      - vomsdir:/vomsdir
+
+  nginx:
+    image: ${NGINX_VOMS_IMAGE}:${NGINX_VOMS_IMAGE_TAG}
+
+    depends_on: 
+      vomsaa:
+        condition: service_started
+      trust:
+        condition: service_completed_successfully
+    
+    environment:
+      TZ: Europe/Rome
+      X509_VOMS_DIR: /vomsdir
+
+    ports:
+      - "8443:8443"
+
+    volumes:
+      - cabundle:/etc/pki
+      - trustanchors:/etc/grid-security/certificates
+      - certs:/certs
+      - vomsdir:/etc/grid-security/vomsdir
+      - ./nginx/conf.d/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d/voms.conf:/etc/nginx/conf.d/voms.conf:ro
+
+    networks:
+      default:
+        aliases:
+          - voms.test.example
+
+  vomsaa:
+    image: ${VOMS_AA_IMAGE}:${VOMS_AA_IMAGE_TAG}
+    
+    env_file:
+      - ./voms.env      
+
+    ports:
+      - "1046:1046"
+    
+    depends_on:
+      db:
+        condition: service_healthy
+
+    volumes:
+      - ./application-mysql.yml:/workspace/config/application-mysql.yml:ro
+      - certs:/certs:ro
+      - trustanchors:/etc/grid-security/certificates
+
+  clients:
+    image: ${GRID_CLIENTS_IMAGE}:${GRID_CLIENTS_IMAGE_TAG}
+    environment:
+      TZ: Europe/Rome
+
+    depends_on:
+      trust:
+        condition: service_completed_successfully
+
+    volumes:
+      - cabundle:/etc/pki
+      - trustanchors:/etc/grid-security/certificates
+      - vomsdir:/etc/grid-security/vomsdir
+      - ./vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc:ro
+      - ./vomses:/etc/vomses
+      - certs:/certs
+
+    entrypoint:  sleep infinity
+
+    networks:
+      default:
