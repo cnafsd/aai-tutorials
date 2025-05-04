@@ -77,8 +77,8 @@ services:
         aliases:
           - storm.test.example
 
-  client:
-    image: ${CLIENT_IMAGE}:${CLIENT_IMAGE_TAG}
+  clients:
+    image: ${CLIENTS_IMAGE}:${CLIENTS_IMAGE_TAG}
     environment:
       - TZ=UTC
       - OIDC_AGENT_ALIAS

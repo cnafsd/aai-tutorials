@@ -21,7 +21,7 @@ The docker-compose file contains the next services:
   * `noauth`: which allows read/write mode also to anonymous users
   * `fga`: for a fined grained authorization storage area. Its access policies are set in the [application](./assets/etc/storm/webdav/config/application-policies.yml) file
   * `oauth-authz`: for users presenting a token issued by the [IAM DEV](https://iam-dev.cloud.cnaf.infn.it)
-* `client`: used for running the GRID clients (e.g. `voms-proxy-init`, `gfal`, `oidc-agent`, etc.).
+* `clients`: used for running the GRID clients (e.g. `voms-proxy-init`, `gfal`, `oidc-agent`, etc.).
 
 To resolve the hostname of the service, add a line in your `/etc/hosts` file with
 
@@ -40,7 +40,7 @@ docker compose down -v --remove-orphans
 To perform tests with GRID clients, enter in the container
 
 ```bash
-docker-compose exec client bash
+docker compose exec clients bash
 ```
 
 Some proxy with different VOMS extensions are available in the container (self-created, through `voms-proxy-fake`, meaning without the interaction with a VOMS server)
@@ -190,7 +190,7 @@ voms-proxy-destroy
 
 #### JWT with default groups
 
-Use a generic token issued by [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) instead. In this tutorial, an `oidc-agent` client configuration mounted in the client container is used, but you should create a new one since the CLIENT_ID/SECRET MUST NOT be shared among users!
+Use a generic token issued by [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) instead. In this tutorial, an `oidc-agent` client configuration mounted in the `clients` container is used, but you should create a new one since the CLIENT_ID/SECRET MUST NOT be shared among users!
 
 Set the following variable and add the client configuration to the `oidc-agent` service with
 
