@@ -22,7 +22,7 @@ The docker-compose contains several services:
 * `db`: is a mysql database used by INDIGO IAM and VOMS-AA. A dump of the database with test users plus a _test0_ certificate linked to an account may be enabled. The test user also belong to the `indigo-dc` VO/IAM group, such that it can request for VOMS proxies (from the `vomsaa` service) and JWT tokens (from the `iam` service)
 * `storage-setup`: sidecar container, used to allocate proper volumes (i.e. storage areas) owned by _storm_
 * `webdav`: is the StoRM WebDAV service. The base URL is https://storm.test.example:8443. It serves the following storage areas:
-  * `indigo-dc` for users presenting a proxy issued by the `vomsaa` service (serving the `indigo-dc` VO)
+  * `indigo-dc` for users presenting a proxy issued by the local `vomsaa` service (serving the `indigo-dc` VO)
   * `noauth`: which allows read/write mode also to anonymous users
   * `fga`: for a fined grained authorization storage area. Its access policies are set in the [application](./webdav/etc/storm/webdav/config/application-policies.yml) file
   * `oauth-authz`: for users presenting a token issued by the local `iam` service
@@ -167,8 +167,9 @@ gfal-copy error: 1 (Operation not permitted) - DESTINATION OVERWRITE   HTTP 403 
 ## fga
 
 This is a fine-grained SA, whose permissions are the following
-* read/write to `/fga/xfers` folder to `/indigo-iam/xfers` members (default IAM group) of the `iam` local service and users of the `/indigo-dc/xfers` VOMS group (the AC is signed by the `vomsaa` local service)
-* read/write to the SA to `/indigo-dc/webdav` members (optional IAM group) and users with VOMS role = webdav
+
+* read/write the `/fga/xfers` folder allowed to `/indigo-dc/xfers` members (default IAM group) of the `iam` local service and users of the `/indigo-dc/xfers` VOMS group (the AC is signed by the `vomsaa` local service)
+* read/write the whole SA allowed to `/indigo-dc/webdav` members (optional IAM group) and users with VOMS role = webdav
 * read access to tokens issued by `iam` and proxies signed by the `indigo-dc` VO
 * read access to anyone to the `/fga/public` folder and subfolders.
 
@@ -432,24 +433,21 @@ and cross-check that it is listed among the groups within the _wlcg.group_ claim
 $ echo $AT | cut -d. -f2 | base64 -d 2>/dev/null | jq .
 {
   "wlcg.ver": "1.0",
-  "sub": "d331b9e3-c5bd-4e1c-a519-c9b93a093d0b",
+  "sub": "80e5fb8d-b7c8-451a-89ba-346ae278a66f",
   "aud": "https://wlcg.cern.ch/jwt/v1/any",
-  "nbf": 1746369501,
-  "scope": "wlcg.groups:/dev/webdav wlcg.groups",
-  "iss": "https://iam-dev.cloud.cnaf.infn.it/",
-  "exp": 1746373101,
-  "iat": 1746369501,
-  "jti": "32dbf487-8013-422c-a2b7-0fcb356d8f3f",
-  "client_id": "cf199b96-bec5-4f2e-a89c-e85d0dfdd8a5",
+  "nbf": 1746384391,
+  "scope": "wlcg.groups:/indigo-dc/webdav wlcg.groups",
+  "iss": "https://iam.test.example/",
+  "exp": 1746387991,
+  "iat": 1746384391,
+  "jti": "e4234ed7-deb8-48c9-bd39-2d0f59c9f575",
+  "client_id": "6a86717b-5153-4592-a636-2bf021694a58",
   "wlcg.groups": [
-    "/dev/webdav",
-    "/RootGroup",
-    "/cms",
-    "/cnafsd",
-    "/dev",
-    "/dev/xfers",
-    "/otello",
-    "/otello/editor"
+    "/indigo-dc/webdav",
+    "/Analysis",
+    "/Production",
+    "/indigo-dc",
+    "/indigo-dc/xfers"
   ]
 }
 ```
