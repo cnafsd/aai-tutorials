@@ -16,7 +16,7 @@ storm:
           fqan: /dev/Role=webdav
       - type: fqan
         params:
-          fqan: /indigo-dc/Role=webdav
+          fqan: /indigo-dc/Role=webdav/Capability=NULL
     - sa: fga
       actions:
       - all
@@ -34,7 +34,7 @@ storm:
           fqan: /dev/xfers
       - type: fqan
         params:
-          fqan: /indigo-dc/xfers
+          fqan: /indigo-dc/xfers/Role=NULL/Capability=NULL
     - sa: fga
       actions:
       - list
@@ -50,7 +50,7 @@ storm:
           vo: dev
       - type: vo
         params:
-          vo: dev
+          vo: indigo-dc
     - sa: fga
       actions:
       - list

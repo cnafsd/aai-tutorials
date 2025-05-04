@@ -119,7 +119,8 @@ services:
       - cabundle:/etc/pki
       - trustanchors:/etc/grid-security/certificates
       - certs:/etc/grid-security/storm-webdav/:ro 
-      - vomsdir:/etc/grid-security/vomsdir:ro
+      - vomsdir:/etc/grid-security/vomsdir
+      - ./vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc
       - ./webdav/etc/storm/webdav/sa.d/:/etc/storm/webdav/sa.d/:ro
       - ./webdav/etc/storm/webdav/config/application-policies.yml:/app/application-policies.yml:ro
       - ./webdav/etc/storm/webdav/config/application-issuers.yml:/app/application-issuers.yml:ro
@@ -146,7 +147,7 @@ services:
       - trustanchors:/etc/grid-security/certificates
       - vomsdir:/etc/grid-security/vomsdir
       - certs:/certs
-      - ./vomsaa/vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc:ro
+      - ./vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc
       - ./vomsaa/vomses:/etc/vomses
       - ./webdav/scripts:/scripts:ro
       - ./webdav/oidc-agent:/home/test/.config/oidc-agent

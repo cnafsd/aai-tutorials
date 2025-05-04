@@ -45,7 +45,7 @@ cp /certs/test0.cert.pem ~/.globus/usercert.pem
 cp /certs/test0.key.pem ~/.globus/userkey.pem
 ```
 
-Ask for a VOMPS proxy with
+Ask for a VOMS proxy with
 
 ```bash
 $ voms-proxy-init -voms indigo-dc

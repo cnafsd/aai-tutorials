@@ -26,7 +26,7 @@ The docker-compose file contains the next services:
 To resolve the hostname of the service, add a line in your `/etc/hosts` file with
 
 ```
-127.0.0.1	storm.test.example    storm-alias.test.example
+127.0.0.1	storm.test.example
 ```
 
 To stop the services and remove orphans containers (the `trust` one) run
@@ -204,7 +204,7 @@ oidc-add --pw-env=OIDC_AGENT_SECRET ${OIDC_AGENT_ALIAS}
 Set the environment variable (used by `Gfal`)
 
 ```bash
-export BEARER_TOKEN=$(oidc-token dev-wlcg)
+export BEARER_TOKEN=$(oidc-token ${OIDC_AGENT_ALIAS})
 ```
 
 Cross-check that you can read the file
