@@ -158,8 +158,6 @@ services:
       - certs:/certs
       - ./vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc
       - ./vomsaa/vomses:/etc/vomses
-      - ./webdav/scripts:/scripts:ro
-      - ./webdav/oidc-agent:/home/test/.config/oidc-agent
 
     entrypoint:  sleep infinity
 
