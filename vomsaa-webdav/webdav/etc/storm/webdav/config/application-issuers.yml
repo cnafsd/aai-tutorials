@@ -1,0 +1,4 @@
+oauth:
+  issuers:
+    - name: dev
+      issuer: https://iam-dev.cloud.cnaf.infn.it/

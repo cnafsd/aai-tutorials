@@ -1,0 +1,63 @@
+storm:
+  authz:
+    policies:
+    - sa: fga
+      actions:
+      - all
+      effect: permit
+      description: Grant read/write to the SA to /dev/webdav members and users with VOMS role = webdav
+      principals:
+      - type: jwt-group
+        params:
+          iss: https://iam-dev.cloud.cnaf.infn.it/
+          group: /dev/webdav
+      - type: fqan
+        params:
+          fqan: /dev/Role=webdav
+      - type: fqan
+        params:
+          fqan: /indigo-dc/Role=webdav
+    - sa: fga
+      actions:
+      - all
+      effect: permit
+      description: Grant read/write access to /fga/xfers to /dev/xfers and /indigo-dc/xfers members
+      paths:
+      - /xfers/**
+      principals:
+      - type: jwt-group
+        params:
+          iss: https://iam-dev.cloud.cnaf.infn.it/
+          group: /dev/xfers
+      - type: fqan
+        params:
+          fqan: /dev/xfers
+      - type: fqan
+        params:
+          fqan: /indigo-dc/xfers
+    - sa: fga
+      actions:
+      - list
+      - read
+      effect: permit
+      description: Grant read access to tokens issued by iam-dev and proxies obtain by dev/indigo-dc VO
+      principals:
+      - type: jwt-issuer
+        params:
+          iss: https://iam-dev.cloud.cnaf.infn.it/
+      - type: vo
+        params:
+          vo: dev
+      - type: vo
+        params:
+          vo: dev
+    - sa: fga
+      actions:
+      - list
+      - read
+      effect: permit
+      description: Grant read access to anyone to the public area
+      paths:
+      - /public/**
+      principals:
+      - type: anyone

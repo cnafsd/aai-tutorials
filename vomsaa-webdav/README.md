@@ -1,4 +1,4 @@
-# Docker compose for VOMS Attribute Authority (voms-aa)
+# Docker compose for VOMS AA and StoRM WevDAV
 
 Build the trustanchor
 
@@ -15,15 +15,22 @@ docker compose up -d
 The docker-compose contains several services:
 
 * `trust`: docker image for the _igi-test-ca_ CA certificates issuing server/user certificates, usually mounted in the `/etc/grid-security/certificates` path of the other services. The container populates a `/certs` volume containing server/user X.509 certificates
-* `nginx-voms`: is the NGINX reverse proxy which forwards requests to the VOMS-AA microservice (it differs by the `iam` service since it supports HTTPG). URL of this service is https://voms.test.example:8443
+* `nginx`: is the NGINX reverse proxy which forwards requests to the VOMS-AA microservice. URL of this service is https://voms.test.example:8445
 * `vomsaa`: is the VOMS-AA microservice which acts as VOMS Admin. It serves the `indigo-dc` VO
 * `db`: is a mysql database used by INDIGO IAM and VOMS-AA. A dump of the database with test users plus a _test0_ certificate linked to an account may be enabled. The test user also belong to the `indigo-dc` VO/IAM group, such that it can request for VOMS proxies
-* `clients`: is an image containing GRID clients (in particular _voms-proxy-init_) used to query the VOMS AA service.
+* `storage-setup`: sidecar container, used to allocate proper volumes (i.e. storage areas) owned by _storm_
+* `webdav`: is the main service, also known as StoRM WebDAV. The StoRM WebDAV base URL is https://storm.test.example:8443. It serves the following storage areas:
+  * `indigo-dc` for users presenting a proxy issued by the `vomsaa` service (serving the `indigo-dc` VO)
+  * `test.vo` for users presenting a proxy issued by a _test.vo_ VO
+  * `noauth`: which allows read/write mode also to anonymous users
+  * `fga`: for a fined grained authorization storage area. Its access policies are set in the [application](./webdav/etc/storm/webdav/config/application-policies.yml) file
+  * `oauth-authz`: for users presenting a token issued by the [IAM DEV](https://iam-dev.cloud.cnaf.infn.it)
+* `clients`: is an image containing GRID clients (e.g. `voms-proxy-init`, `gfal`, `oidc-agent`, etc.) used to query the VOMS AA service.
   
-To resolve the hostname of the service, add a line in your `/etc/hosts` file with
+To resolve the hostname of the services, add a line in your `/etc/hosts` file with
 
 ```
-127.0.0.1	voms.test.example
+127.0.0.1	voms.test.example   storm.test.example
 ```
 
 ## Setup credentials
