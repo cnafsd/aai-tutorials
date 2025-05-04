@@ -1,0 +1,167 @@
+volumes:
+  db_data:
+  trustanchors:
+  cabundle:
+  vomsdir:
+  certs:
+  storage:
+
+services:
+
+  db:
+    image: ${DB_IMAGE}:${DB_IMAGE_TAG}
+    container_name: db
+    hostname: db
+    volumes:
+     - db_data:/var/lib/mysql
+     - ../iam-db/iam-test-dump.sql:/docker-entrypoint-initdb.d/iam-test-dump.sql
+    
+    env_file:
+      - ../iam-db/db.env
+
+    ports:
+      - "3307:3307"
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3307", "--silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 0s
+
+  trust:
+    build:
+      context: ../trust
+    volumes:
+      - trustanchors:/trust-anchors
+      - cabundle:/etc/pki
+      - certs:/certs
+      - vomsdir:/vomsdir
+
+  iam:
+    image: ${NGINX_IMAGE}:${NGINX_IMAGE_TAG}
+    container_name: iam
+
+    depends_on:
+      iam-be:
+        condition: service_started
+      trust:
+        condition: service_completed_successfully
+
+    dns_search: test.example
+
+    environment:
+      TZ: Europe/Rome
+      NGINX_HOST: iam
+      NGINX_PORT: 443
+
+    ports:
+      - "443:443"
+
+    volumes:
+      - /dev/urandom:/dev/random
+      - cabundle:/etc/pki
+      - certs:/certs
+      - ./iam/nginx/iam.conf:/etc/nginx/conf.d/default.conf
+      - ./iam/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+    networks:
+      default:
+        aliases:
+          - iam.test.example
+
+  iam-be:
+    container_name: iam-be
+    image: ${IAM_IMAGE}:${IAM_IMAGE_TAG}
+    
+    env_file:
+      - ./iam/login-service.env
+      - ./iam/keystore.env
+
+    ports:
+      - "1044:1044"
+
+    depends_on:
+      db:
+        condition: service_healthy
+      trust:
+        condition: service_completed_successfully
+
+    volumes:
+      - trustanchors:/etc/grid-security/certificates
+      - /dev/urandom:/dev/random
+      - ./iam/keystore.jwks:/indigo-iam/config/keystore.jwks:ro
+
+  nginx-voms:
+    image: ${NGINX_VOMS_IMAGE}:${NGINX_VOMS_IMAGE_TAG}
+
+    depends_on: 
+      vomsaa:
+        condition: service_started
+      trust:
+        condition: service_completed_successfully
+    
+    environment:
+      TZ: Europe/Rome
+      X509_VOMS_DIR: /vomsdir
+
+    ports:
+      - "8445:8445"
+
+    volumes:
+      - cabundle:/etc/pki
+      - trustanchors:/etc/grid-security/certificates
+      - certs:/certs
+      - vomsdir:/etc/grid-security/vomsdir
+      - ./vomsaa/nginx/conf.d/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./vomsaa/nginx/conf.d/voms.conf:/etc/nginx/conf.d/voms.conf:ro
+
+    networks:
+      default:
+        aliases:
+          - voms.test.example
+
+  vomsaa:
+    image: ${VOMS_AA_IMAGE}:${VOMS_AA_IMAGE_TAG}
+    
+    env_file:
+      - ./vomsaa/voms.env      
+
+    ports:
+      - "1046:1046"
+    
+    depends_on:
+      db:
+        condition: service_healthy
+
+    volumes:
+      - ./vomsaa/application-mysql.yml:/workspace/config/application-mysql.yml:ro
+      - certs:/certs:ro
+      - trustanchors:/etc/grid-security/certificates
+          
+  clients:
+    image: ${GRID_CLIENTS_IMAGE}:${GRID_CLIENTS_IMAGE_TAG}
+    environment:
+      TZ: Europe/Rome
+      OIDC_AGENT_ALIAS:
+      OIDC_AGENT_SECRET:
+      IAM_ACCESS_TOKEN:
+
+    depends_on:
+      trust:
+        condition: service_completed_successfully
+
+    volumes:
+      - cabundle:/etc/pki
+      - trustanchors:/etc/grid-security/certificates
+      - vomsdir:/etc/grid-security/vomsdir
+      - certs:/certs
+      - ./vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc
+      - ./vomsaa/vomses:/etc/vomses
+      - ./webdav/scripts:/scripts:ro
+      - ./webdav/oidc-agent:/home/test/.config/oidc-agent
+
+    entrypoint:  sleep infinity
+
+    networks:
+      default:
