@@ -1,5 +1,9 @@
 # Docker compose for VOMS AA and StoRM WevDAV
 
+This folder allows to ask for a token to the local VOMS AA and be authorized to access resources served by the local StoRM WebDAV.
+
+## Run the compose
+
 Build the trustanchor
 
 ```bash

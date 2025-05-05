@@ -1,5 +1,9 @@
 # Docker compose for StoRM WebDAV
 
+This folder can be used to play with StoRM WebDAV, including its access policies, with the already created X.509 credentials and VOMS proxies.
+
+## Run the compose
+
 Build the trustanchor
 
 ```bash

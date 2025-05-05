@@ -1,5 +1,9 @@
 # Docker compose for INDIGO IAM
 
+This folder can be used to play with the IAM web interface and `iam-test-client` (a demo Web application which allows you, among other things, to get an access token).
+
+## Run the compose
+
 Build the trustanchor
 
 ```bash
@@ -25,11 +29,6 @@ To resolve the hostname of the service, add a line in your `/etc/hosts` file wit
 ```
 127.0.0.1	iam.test.example
 ```
-
-
-## INDIGO IAM versions
-
-To switch between different IAM versions, change the `IAM_IMAGE_TAG` variable located in the `.env` file with the desired version.
 
 ## DB
 
@@ -76,3 +75,4 @@ Available at https://iam.test.example/.
 The IAM database is populated with test users/certificates. 
 To have a full production instance (with only the Admin user in the db) remove the injection of the db dump in the db service container. The Admin user will be the only one available during the first login phase.
 
+To switch between different IAM versions, change the `IAM_IMAGE_TAG` variable located in the `.env` file with the desired version.

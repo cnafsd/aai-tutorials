@@ -1,5 +1,9 @@
 # Docker compose for VOMS Attribute Authority (voms-aa)
 
+This folder contains a VOMS AA server (issuing proxies) and a Grid clients container. A db is also loaded and populated with users and linked certificates, which allows you to ask for a VOMS proxy with different attributes.
+
+## Run the compose
+
 Build the trustanchor
 
 ```bash
@@ -48,8 +52,7 @@ cp /certs/test0.key.pem ~/.globus/userkey.pem
 Ask for a VOMS proxy with
 
 ```bash
-$ voms-proxy-init -voms indigo-dc
-Enter GRID pass phrase for this identity:  #pass
+$ echo pass | voms-proxy-init -voms indigo-dc -pwstdin
 Contacting voms.test.example:8443 [/C=IT/O=IGI/CN=voms.test.example] "indigo-dc"...
 Remote VOMS server contacted succesfully.
 
@@ -79,8 +82,7 @@ uri       : voms.test.example:8080
 Ask for the specific VOMS Role `webdav` with
 
 ```bash
-$ voms-proxy-init -voms indigo-dc:/indigo-dc/Role=webdav
-Enter GRID pass phrase for this identity: #pass
+$ echo pass | voms-proxy-init -voms indigo-dc:/indigo-dc/Role=webdav -pwstdin
 Contacting voms.test.example:8443 [/C=IT/O=IGI/CN=voms.test.example] "indigo-dc"...
 Remote VOMS server contacted succesfully.
 
@@ -111,8 +113,7 @@ uri       : voms.test.example:8080
 Ask to set `/indigo-dc/xfers` as primary group (i.e. appearing as first attribute in the proxy)
 
 ```bash
-$ voms-proxy-init -voms indigo-dc -order /indigo-dc/xfers
-Enter GRID pass phrase for this identity:  #pass
+$ echo pass | voms-proxy-init -voms indigo-dc -order /indigo-dc/xfers -pwstdin
 Contacting voms.test.example:8443 [/C=IT/O=IGI/CN=voms.test.example] "indigo-dc"...
 Remote VOMS server contacted succesfully.
 
@@ -120,7 +121,7 @@ Remote VOMS server contacted succesfully.
 Created proxy in /tmp/x509up_u1000.
 
 Your proxy is valid until Mon May 05 00:21:35 CEST 2025
-[test@e8431e11f954 ~]$ voms-proxy-info -all
+$ voms-proxy-info -all
 subject   : /C=IT/O=IGI/CN=test0/CN=385623803
 issuer    : /C=IT/O=IGI/CN=test0
 identity  : /C=IT/O=IGI/CN=test0

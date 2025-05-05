@@ -1,5 +1,9 @@
 # Docker compose for VOMS AA and StoRM WevDAV
 
+This folder allows you to ask for a VOMS proxy with different attributes. Also, you can play with group membership (i.e. add/remove the _test_ user to some group) and check that the change is propagated in the VOMS proxy.
+
+## Run the compose
+
 Build the trustanchor
 
 ```bash

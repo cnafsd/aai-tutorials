@@ -1,5 +1,9 @@
 # Docker compose for VOMS AA and StoRM WevDAV
 
+This repo holds self-contained examples on how to get a token (from the local IAM) or a proxy (from the local VOMS AA) and access a StoRM WebDAV resource.
+
+## Run the compose
+
 Build the trustanchor
 
 ```bash
