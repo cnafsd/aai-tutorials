@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-OIDC_AGENT_ALIAS=${OIDC_AGENT_ALIAS:-dev-wlcg}
+OIDC_AGENT_ALIAS=${OIDC_AGENT_ALIAS:-test0}
 
 eval $(oidc-agent-service use)
 oidc-add --pw-env=OIDC_AGENT_SECRET ${OIDC_AGENT_ALIAS}
