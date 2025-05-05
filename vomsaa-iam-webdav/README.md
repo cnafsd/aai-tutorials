@@ -377,14 +377,14 @@ $ echo $AT | cut -d. -f2 | base64 -d 2>/dev/null | jq .
 Now ask for the `/indigo-dc/xfers` group to be the **primary** with
 
 ```bash
-$ AT=$(oidc-token -s wlcg.groups -s wlcg.groups:/indigo-dc/xfers ${OIDC_AGENT_ALIAS})
+$ AT=$(oidc-token -s wlcg.groups:/indigo-dc/xfers ${OIDC_AGENT_ALIAS})
 $ echo $AT | cut -d. -f2 | base64 -d 2>/dev/null | jq .
 {
   "wlcg.ver": "1.0",
   "sub": "80e5fb8d-b7c8-451a-89ba-346ae278a66f",
   "aud": "https://wlcg.cern.ch/jwt/v1/any",
   "nbf": 1746377883,
-  "scope": "wlcg.groups:/indigo-dc/xfers wlcg.groups",
+  "scope": "wlcg.groups:/indigo-dc/xfers",
   "iss": "https://iam.test.example/",
   "exp": 1746381483,
   "iat": 1746377883,
@@ -428,7 +428,7 @@ gfal-cat error: 2 (No such file or directory) - Result HTTP 404 : File not found
 Create an access token from `iam`, with the WLCG optional group `/indigo-dc/webdav`
 
 ```bash
-AT=$(oidc-token -s wlcg.groups -s wlcg.groups:/indigo-dc/webdav ${OIDC_AGENT_ALIAS})
+AT=$(oidc-token -s wlcg.groups:/indigo-dc/webdav ${OIDC_AGENT_ALIAS})
 ```
 
 and cross-check that it is listed among the groups within the _wlcg.group_ claim (note that it was not appearing when not explicitely requested)
