@@ -81,6 +81,7 @@ services:
 
     volumes:
       - ./application-mysql.yml:/workspace/config/application-mysql.yml:ro
+      - ./application-voms.yml:/workspace/config/application-voms.yml:ro
       - certs:/certs:ro
       - trustanchors:/etc/grid-security/certificates
 
