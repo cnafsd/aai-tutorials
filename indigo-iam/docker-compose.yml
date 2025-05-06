@@ -59,11 +59,13 @@ services:
       - /dev/urandom:/dev/random
       - ./assets/keystore.jwks:/indigo-iam/config/keystore.jwks:ro
       - ./img/:/local-resources/
+      - ./email-templates/resetPassword.ftl:/indigo-iam/WEB-INF/classes/email-templates/resetPassword.ftl
+      - ./assets/logback-spring.xml:/indigo-iam/logback-spring.xml:ro
       - ./application-files/application-oidc.yml:/indigo-iam/config/application-oidc.yml:ro
       - ./application-files/application-saml.yml:/indigo-iam/config/application-saml.yml:ro
       - ./application-files/application-sp-saml.yml:/indigo-iam/config/application-sp-saml.yml:ro
       - ./application-files/application-mysql.yml:/indigo-iam/config/application-mysql.yml:ro
-      - ./email-templates/resetPassword.ftl:/indigo-iam/WEB-INF/classes/email-templates/resetPassword.ftl
+      - ./application-files/application-logs.yml:/indigo-iam/config/application-logs.yml:ro
 
   client:
     image: ${CLIENT_IMAGE}:${CLIENT_IMAGE_TAG}

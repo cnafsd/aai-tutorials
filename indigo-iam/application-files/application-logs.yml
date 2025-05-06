@@ -1,0 +1,2 @@
+logging:
+  config: /indigo-iam/logback-spring.xml

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+  <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+  <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+  <property name="IAM_LOG_PATTERN" value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSZ, Europe/Paris} %-5level ${PID} --- [%thread] %logger{36} : %msg%n"/>
+
+  <appender name="AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${IAM_LOG_PATH:-/var/log/iam}/iam-audit.log</File>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <FileNamePattern>${IAM_LOG_PATH:-/var/log/iam}/iam-audit-%d{yyyy-MM-dd}.log.gz</FileNamePattern>
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>${IAM_LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${IAM_LOG_PATH:-/var/log/iam}/iam.log</File>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <FileNamePattern>${IAM_LOG_PATH:-/var/log/iam}/iam-%d{yyyy-MM-dd}.log.gz</FileNamePattern>
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>${IAM_LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.springframework" level="WARN" />
+
+  <logger name="AUDIT" additivity="false" level="INFO">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="AUDIT" />
+  </logger>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="SERVICE" />
+  </root>
+</configuration>
