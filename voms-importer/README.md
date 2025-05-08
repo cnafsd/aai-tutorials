@@ -2,6 +2,17 @@
 
 This folder allows to import VOMS users from https://meteora.cloud.cnaf.infn.it:8443/ (VOMS server) into https://iam-dev.cloud.cnaf.infn.it (INDIGO IAM).
 
+## Run
+
+In order to perform administrative operations, you need to register an oidc-agent client linked to your IAM Admin account with at least the `openid offline_access iam:admin.read iam:admin.write scim:read scim:write proxy:generate` scopes enabled.
+
+Create an `oidc-agent.env` file in this folder containing the alias and secret for the configuration, e.g.
+
+```bash
+OIDC_AGENT_ALIAS=changeme
+OIDC_AGENT_SECRET=changeme
+```
+
 ## Compose
 
 Run the compose and enter in the container with
@@ -11,7 +22,7 @@ docker compose up -d
 docker compose exec importer bash
 ```
 
-Modify the [oidc-agent.env](./oidc-agent.env) file updating the OIDC_AGENT_ALIAS and _SECRET of the oidc-agent Client registered in iam-dev. 
+(it requires you have a local GRID certificate/key pair with proper permissions in the `~/.globus` folder).
 
 Run the script which initializes your admin credentials
 
@@ -32,12 +43,10 @@ _The `skip-duplicate-accounts-checks` option is required in the importer version
 To run the importer directly from docker
 
 ```bash
-docker run --rm -it -e X509_USER_PROXY=/tmp/x509up_u501 -e IAM_ENDPOINT=https://iam-dev.cloud.cnaf.infn.it --env-file oidc-agent.env -v ~/.config/oidc-agent:/home/test/.config/oidc-agent -v ~/.globus:/home/test/.globus --entrypoint bash indigoiam/voms-importer:v0.1.15
+docker run --rm -it -e X509_USER_PROXY=/tmp/x509up_u501 -e IAM_ENDPOINT=https://iam-dev.cloud.cnaf.infn.it --env-file oidc-agent.env -v ./oidc-agent:/home/test/.config/oidc-agent -v ~/.globus:/home/test/.globus --entrypoint bash indigoiam/voms-importer:v0.1.15
 ```
 
-(it requires you have a local GRID certificate/key pair with proper permissions in the `~/.globus`).
-
-Modify the [oidc-agent.env](./oidc-agent.env) file updating the OIDC_AGENT_ALIAS and _SECRET of the oidc-agent Client registered in iam-dev. 
+(it requires you have a local GRID certificate/key pair with proper permissions in the `~/.globus` folder).
 
 Run the script which initializes your admin credentials
 
@@ -48,7 +57,7 @@ init-credentials.sh
 and run the importer with
 
 ```bash
-vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks --debug
+vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
 ```
 
 ## More options
@@ -57,10 +66,10 @@ More options can be used to run the importer.
 
 ### email-mapfile
 
-To override email account for duplicate email in VOMS synchronizing (not existing) IAM users
+To overwrite email account for duplicate email in VOMS synchronizing (not existing) IAM users
 
 ```bash
-vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks --email-mapfile /volume/email-mapfile 
+vomsimporter --email-mapfile /volume/email-mapfile  --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
 ```
 
 ### id-file
@@ -68,7 +77,7 @@ vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 844
 To run the importer for only selected accounts
 
 ```bash
-vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks --id-file /volume/id-file 
+vomsimporter --id-file /volume/id-file --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
 ```
 
 ### username-attr
@@ -76,7 +85,7 @@ vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 844
 Create an IAM account with username equal to a VOMS attribute whose key is _nickname_
 
 ```bash
-vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks --username-attr=nickname
+vomsimporter --username-attr=nickname --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
 ```
 
 ### synchronize-activation-status
@@ -84,13 +93,13 @@ vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 844
 To synchronize the VOMS user's activation status with IAM, including importing the disabled VOMS users
 
 ```bash
-vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks --synchronize-activation-status
+vomsimporter --synchronize-activation-status --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
 ```
 
 ### skip-users-import
 
-To not import VOMS users into IAM
+To not import VOMS users into IAM (this way you will import just groups and roles)
 
 ```bash
-vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks --skip-users-import
+vomsimporter --skip-users-import --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
 ```
