@@ -19,9 +19,6 @@ services:
     
     volumes:
       - ./oidc-agent:/home/test/.config/oidc-agent
-      # Comment the line above and uncomment the one below
-      # to source from your local oidc-agent configurations
-      # - ~/.config/oidc-agent:/home/test/.config/oidc-agent
       - ~/.globus:/home/test/.globus/
       - ./:/volume
 
