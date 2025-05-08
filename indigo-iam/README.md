@@ -4,6 +4,19 @@ This folder can be used to play with the IAM web interface and `iam-test-client`
 
 ## Run the compose
 
+Create the required missing files (the variables may remain blank)
+
+* `env-files/iam-dev.env` with the following content
+  ```bash
+  IAM_DEV_CLIENT_ID=
+  IAM_DEV_CLIENT_SECRET=
+  ```
+* `env-files/orcid.env` with the following content
+  ```bash
+  ORCID_CLIENT_ID=
+  ORCID_CLIENT_SECRET=
+  ```
+
 Build the trustanchor
 
 ```bash
