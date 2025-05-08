@@ -93,7 +93,7 @@ services:
 
     volumes:
       - storage:/storage
-      - ./webdav/scripts:/scripts:ro
+      - ./scripts:/scripts:ro
       - ./webdav/etc/storm/webdav/sa.d/:/etc/storm/webdav/sa.d/:ro
     
     user: root
@@ -135,9 +135,9 @@ services:
     image: ${GRID_CLIENTS_IMAGE}:${GRID_CLIENTS_IMAGE_TAG}
     environment:
       TZ: Europe/Rome
-      OIDC_AGENT_ALIAS:
-      OIDC_AGENT_SECRET:
-      IAM_ACCESS_TOKEN:
+
+    env_file:
+      - oidc-agent/oidc-agent.env
 
     depends_on:
       trust:
@@ -150,8 +150,8 @@ services:
       - certs:/certs
       - ./vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc
       - ./vomsaa/vomses:/etc/vomses
-      - ./webdav/scripts:/scripts:ro
-      - ./webdav/oidc-agent:/home/test/.config/oidc-agent
+      - ./scripts:/scripts:ro
+      - ./oidc-agent:/home/test/.config/oidc-agent
 
     entrypoint:  sleep infinity
 

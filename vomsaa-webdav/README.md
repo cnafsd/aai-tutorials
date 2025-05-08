@@ -4,6 +4,14 @@ This folder allows to ask for a token to the local VOMS AA and be authorized to 
 
 ## Run the compose
 
+Create the required missing file that will contain the oidc-agent client details in
+`oidc-agent/oidc-agent.env`
+
+```bash
+OIDC_AGENT_ALIAS=changeme
+OIDC_AGENT_SECRET=changeme
+```
+
 Build the trustanchor
 
 ```bash
@@ -92,11 +100,16 @@ uri       : voms.test.example:8080
 
 This tutorial is provided with an `oidc-agent` client configuration (linked to [IAM DEV](https://iam-dev.cloud.cnaf.infn.it)) mounted in the `clients` container, but you should create a new one since the CLIENT_ID/SECRET MUST NOT be shared among users!
 
-Set the following variable and add the client configuration to the `oidc-agent` service with
+Register an oidc-agent client in [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) and save its alias and secret in
 
 ```bash
-export OIDC_AGENT_ALIAS=<alias-for-oidc-agent-client>
-export OIDC_AGENT_SECRET=<oidc-agent-client-secret>
+OIDC_AGENT_ALIAS=<alias-for-oidc-agent-client>
+OIDC_AGENT_SECRET=<oidc-agent-client-secret>
+```
+
+Start the `oidc-agent` service and add the client configuration with
+
+```bash
 eval $(oidc-agent-service use)
 oidc-add --pw-env=OIDC_AGENT_SECRET ${OIDC_AGENT_ALIAS}
 ```

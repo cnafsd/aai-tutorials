@@ -143,9 +143,6 @@ services:
     image: ${GRID_CLIENTS_IMAGE}:${GRID_CLIENTS_IMAGE_TAG}
     environment:
       TZ: Europe/Rome
-      OIDC_AGENT_ALIAS:
-      OIDC_AGENT_SECRET:
-      IAM_ACCESS_TOKEN:
 
     depends_on:
       trust:

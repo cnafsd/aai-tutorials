@@ -4,6 +4,14 @@ This folder can be used to play with StoRM WebDAV, including its access policies
 
 ## Run the compose
 
+Create the required missing file that will contain the oidc-agent client details in
+`assets/oidc-agent/oidc-agent.env`
+
+```bash
+OIDC_AGENT_ALIAS=changeme
+OIDC_AGENT_SECRET=changeme
+```
+
 Build the trustanchor
 
 ```bash
@@ -196,11 +204,16 @@ voms-proxy-destroy
 
 Use a generic token issued by [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) instead. In this tutorial, an `oidc-agent` client configuration mounted in the `clients` container is used, but you should create a new one since the CLIENT_ID/SECRET MUST NOT be shared among users!
 
-Set the following variable and add the client configuration to the `oidc-agent` service with
+Register an oidc-agent client in [IAM DEV](https://iam-dev.cloud.cnaf.infn.it) and save its alias and secret in
 
 ```bash
 OIDC_AGENT_ALIAS=<alias-for-oidc-agent-client>
 OIDC_AGENT_SECRET=<oidc-agent-client-secret>
+```
+
+Start the `oidc-agent` service and add the client configuration with
+
+```bash
 eval $(oidc-agent-service use)
 oidc-add --pw-env=OIDC_AGENT_SECRET ${OIDC_AGENT_ALIAS}
 ```

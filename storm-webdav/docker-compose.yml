@@ -77,9 +77,9 @@ services:
     image: ${CLIENTS_IMAGE}:${CLIENTS_IMAGE_TAG}
     environment:
       - TZ=UTC
-      - OIDC_AGENT_ALIAS
-      - OIDC_AGENT_SECRET
-      - IAM_ACCESS_TOKEN
+
+    env_file:
+      - assets/oidc-agent/oidc-agent.env
 
     depends_on:
       trust:

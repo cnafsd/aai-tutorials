@@ -24,7 +24,7 @@ The docker-compose contains several services:
 * `nginx-voms`: is the NGINX reverse proxy which forwards requests to the VOMS-AA microservice. URL of this service is https://voms.test.example:8443
 * `vomsaa`: is the VOMS-AA microservice which acts as VOMS Admin. It serves the `indigo-dc` VO
 * `db`: is a mysql database used by INDIGO IAM and VOMS-AA. A dump of the database with test users plus a _test0_ certificate linked to an account may be enabled. The test user also belong to the `indigo-dc` VO/IAM group, such that it can request for VOMS proxies
-* `clients`: is an image containing GRID clients (e.g. `voms-proxy-init`, `gfal`, `oidc-agent`, etc.) used to query the VOMS AA service.
+* `clients`: is an image containing GRID clients (e.g. `voms-proxy-init`, `gfal`, etc.) used to query the VOMS AA service.
   
 To resolve the hostname of the services, add a line in your `/etc/hosts` file with
 
