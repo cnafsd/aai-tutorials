@@ -1,0 +1,29 @@
+volumes:
+  db_data:
+  trustanchors:
+  cabundle:
+  vomsdir:
+  certs:
+
+services:
+
+  importer:
+    image: ${VOMS_IMPORTER_IMAGE}:${VOMS_IMPORTER_IMAGE_TAG}
+
+    environment:
+      - X509_USER_PROXY=/tmp/x509up_u501
+      - IAM_ENDPOINT=https://iam-dev.cloud.cnaf.infn.it
+    
+    env_file:
+      - oidc-agent.env
+    
+    volumes:
+      - ./oidc-agent:/home/test/.config/oidc-agent
+      # Comment the line above and uncomment the one below
+      # to source from your local oidc-agent configurations
+      # - ~/.config/oidc-agent:/home/test/.config/oidc-agent
+      - ~/.globus:/home/test/.globus/
+      - ./:/volume
+
+    entrypoint:  sleep infinity
+
