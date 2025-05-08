@@ -33,7 +33,11 @@ init-credentials.sh
 Run the importer
 
 ```bash
-vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
+VOMS_VO=test.vo
+VOMS_HOST=meteora.cloud.cnaf.infn.it
+VOMS_PORT=8443
+IAM_HOST=iam-dev.cloud.cnaf.infn.it
+vomsimporter --vo ${VOMS_VO} --voms-host ${VOMS_HOST} --voms-port ${VOMS_PORT} --iam-host ${IAM_HOST} --skip-duplicate-accounts-checks
 ```
 
 _The `skip-duplicate-accounts-checks` option is required in the importer version `0.1.15` otherwise an error will pop-up_.
@@ -57,7 +61,11 @@ init-credentials.sh
 and run the importer with
 
 ```bash
-vomsimporter --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
+VOMS_VO=test.vo
+VOMS_HOST=meteora.cloud.cnaf.infn.it
+VOMS_PORT=8443
+IAM_HOST=iam-dev.cloud.cnaf.infn.it
+vomsimporter --vo ${VOMS_VO} --voms-host ${VOMS_HOST} --voms-port ${VOMS_PORT} --iam-host ${IAM_HOST} --skip-duplicate-accounts-checks
 ```
 
 ## More options
@@ -69,7 +77,7 @@ More options can be used to run the importer.
 To overwrite email account for duplicate email in VOMS synchronizing (not existing) IAM users
 
 ```bash
-vomsimporter --email-mapfile /volume/email-mapfile  --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
+vomsimporter --email-mapfile /volume/email-mapfile --vo ${VOMS_VO} --voms-host ${VOMS_HOST} --voms-port ${VOMS_PORT} --iam-host ${IAM_HOST} --skip-duplicate-accounts-checks
 ```
 
 ### id-file
@@ -77,7 +85,7 @@ vomsimporter --email-mapfile /volume/email-mapfile  --vo test.vo --voms-host met
 To run the importer for only selected accounts
 
 ```bash
-vomsimporter --id-file /volume/id-file --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
+vomsimporter --id-file /volume/id-file --vo ${VOMS_VO} --voms-host ${VOMS_HOST} --voms-port ${VOMS_PORT} --iam-host ${IAM_HOST} --skip-duplicate-accounts-checks
 ```
 
 ### username-attr
@@ -85,7 +93,7 @@ vomsimporter --id-file /volume/id-file --vo test.vo --voms-host meteora.cloud.cn
 Create an IAM account with username equal to a VOMS attribute whose key is _nickname_
 
 ```bash
-vomsimporter --username-attr=nickname --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
+vomsimporter --username-attr nickname --vo ${VOMS_VO} --voms-host ${VOMS_HOST} --voms-port ${VOMS_PORT} --iam-host ${IAM_HOST} --skip-duplicate-accounts-checks
 ```
 
 ### synchronize-activation-status
@@ -93,7 +101,7 @@ vomsimporter --username-attr=nickname --vo test.vo --voms-host meteora.cloud.cna
 To synchronize the VOMS user's activation status with IAM, including importing the disabled VOMS users
 
 ```bash
-vomsimporter --synchronize-activation-status --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
+vomsimporter --synchronize-activation-status --vo ${VOMS_VO} --voms-host ${VOMS_HOST} --voms-port ${VOMS_PORT} --iam-host ${IAM_HOST} --skip-duplicate-accounts-checks
 ```
 
 ### skip-users-import
@@ -101,5 +109,5 @@ vomsimporter --synchronize-activation-status --vo test.vo --voms-host meteora.cl
 To not import VOMS users into IAM (this way you will import just groups and roles)
 
 ```bash
-vomsimporter --skip-users-import --vo test.vo --voms-host meteora.cloud.cnaf.infn.it --voms-port 8443 --iam-host iam-dev.cloud.cnaf.infn.it --skip-duplicate-accounts-checks
+vomsimporter --skip-users-import --vo ${VOMS_VO} --voms-host ${VOMS_HOST} --voms-port ${VOMS_PORT} --iam-host ${IAM_HOST} --skip-duplicate-accounts-checks
 ```
