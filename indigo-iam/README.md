@@ -33,9 +33,10 @@ The docker-compose contains several services:
 
 * `trust`: docker image for the _igi-test-ca_ CA certificate issuing server/user certificates, usually mounted in the `/etc/grid-security/certificates` path of the other services. The container populates a `/certs` volume containing server X.509 certificates
 * `iam-be`: is the main service, also known as `iam-login-service`. The INDIGO IAM base URL is https://iam.test.example
-* `client`: is an example of a client application (also known as `iam-test-client`), where a login button redirects to `iam-be` to start an authorization code flow. URL of this service is https://iam.test.example/iam-test-client
+* `demo`: is an example of a client application (also known as `iam-test-client`), where a login button redirects to `iam-be` to start an authorization code flow. URL of this service is https://iam.test.example/iam-test-client
 * `iam`: is an `nginx` image used for TLS termination and reverse proxy
-* `db`: is a mysql database used by INDIGO IAM and VOMS-AA. A dump of the database with test users plus a _test0_ certificate linked to an account may be enabled.
+* `db`: is a mysql database used by INDIGO IAM. A dump of the database with test users plus a _test0_ certificate linked to an account may be enabled
+* `clients`: is an image containing `oidc-agent` used to query the local IAM services.
   
 To resolve the hostname of the service, add a line in your `/etc/hosts` file with
 
@@ -52,20 +53,29 @@ The IAM database is populated with test users/certificates, in particular
 
 To have a full production instance (with only the Admin user in the db) remove the injection of the db dump in the db service container.
 
-## Browsing IAM
+## IAM
+
+Available at https://iam.test.example/.
+
+The IAM database is populated with test users/certificates. 
+To have a full production instance (with only the Admin user in the db) remove the injection of the db dump in the db service container. The Admin user will be the only one available during the first login phase.
+
+To switch between different IAM versions, change the `IAM_IMAGE_TAG` variable located in the `.env` file with the desired version.
+
+### Browsing IAM
 
 In order to trust the server certificate, you must to provide the browser with the CA.
 
 You can find it in
 
 ```bash
-docker compose exec iam-be bash
+docker compose exec clients bash
 cat /etc/grid-security/certificates/igi_test_ca.pem     # Copy and paste this
 ```
 
-Otherwise, just _Accept risk and continue_.
+otherwise, just _Accept risk and continue_.
 
-## iam-test-client
+## iam-test-client (demo application)
 
 Available at https://iam.test.example/iam-test-client.
 
@@ -81,11 +91,107 @@ After a login with IAM, `iam-test-client` shows
 * the userinfo endpoint response of IAM (which basically returns information about the authenticated user)
 * an encoded refresh token (obtained when requesting the `offline_access` scope).
 
-## iam-login-service
+## clients
 
-Available at https://iam.test.example/.
+This separate container allows to request for tokens from IAM either with `curl` or `oidc-agent`.
 
-The IAM database is populated with test users/certificates. 
-To have a full production instance (with only the Admin user in the db) remove the injection of the db dump in the db service container. The Admin user will be the only one available during the first login phase.
+An `oidc-agent` client configuration (registered within the local `iam` service) mounted in the `clients` container is provided. The CLIEN_ID and SECRET are saved in the db dump used in this compose.
 
-To switch between different IAM versions, change the `IAM_IMAGE_TAG` variable located in the `.env` file with the desired version.
+Enter in the container with
+
+```bash
+docker compose exec clients bash
+```
+
+Start the `oidc-agent` service and add the client configuration with
+
+```bash
+eval $(oidc-agent-service use)
+oidc-add --pw-env=OIDC_AGENT_SECRET ${OIDC_AGENT_ALIAS}
+```
+
+Create an access token issued by `iam`, with the default WLCG groups
+
+```bash
+AT=$(oidc-token -s wlcg.groups ${OIDC_AGENT_ALIAS})
+```
+
+and cross check that the `/indigo-dc/xfers` is listed among the groups within the _wlcg.group_ claim.
+
+```bash
+$ echo $AT | cut -d. -f2 | base64 -d 2>/dev/null | jq .
+{
+  "wlcg.ver": "1.0",
+  "sub": "80e5fb8d-b7c8-451a-89ba-346ae278a66f",
+  "aud": "https://wlcg.cern.ch/jwt/v1/any",
+  "nbf": 1746377814,
+  "scope": "wlcg.groups",
+  "iss": "https://iam.test.example/",
+  "exp": 1746381414,
+  "iat": 1746377814,
+  "jti": "7cfba15a-c3d1-4356-887d-6e33f13af3c1",
+  "client_id": "6a86717b-5153-4592-a636-2bf021694a58",
+  "wlcg.groups": [
+    "/Analysis",
+    "/Production",
+    "/indigo-dc",
+    "/indigo-dc/xfers"
+  ]
+}
+```
+
+Now ask for the `/indigo-dc/xfers` group to be the **primary** with
+
+```bash
+$ AT=$(oidc-token -s wlcg.groups:/indigo-dc/xfers ${OIDC_AGENT_ALIAS})
+$ echo $AT | cut -d. -f2 | base64 -d 2>/dev/null | jq .
+{
+  "wlcg.ver": "1.0",
+  "sub": "80e5fb8d-b7c8-451a-89ba-346ae278a66f",
+  "aud": "https://wlcg.cern.ch/jwt/v1/any",
+  "nbf": 1746377883,
+  "scope": "wlcg.groups:/indigo-dc/xfers",
+  "iss": "https://iam.test.example/",
+  "exp": 1746381483,
+  "iat": 1746377883,
+  "jti": "ffc95ac6-114b-44fc-bbc6-5bc78382b63e",
+  "client_id": "6a86717b-5153-4592-a636-2bf021694a58",
+  "wlcg.groups": [
+    "/indigo-dc/xfers",
+    "/Analysis",
+    "/Production",
+    "/indigo-dc"
+  ]
+}
+```
+
+Create an access token from `iam`, with the WLCG optional group `/indigo-dc/webdav`
+
+```bash
+AT=$(oidc-token -s wlcg.groups:/indigo-dc/webdav ${OIDC_AGENT_ALIAS})
+```
+
+and cross-check that it is listed among the groups within the _wlcg.group_ claim (note that it was not appearing when not explicitely requested)
+
+```bash
+$ echo $AT | cut -d. -f2 | base64 -d 2>/dev/null | jq .
+{
+  "wlcg.ver": "1.0",
+  "sub": "80e5fb8d-b7c8-451a-89ba-346ae278a66f",
+  "aud": "https://wlcg.cern.ch/jwt/v1/any",
+  "nbf": 1746384391,
+  "scope": "wlcg.groups:/indigo-dc/webdav wlcg.groups",
+  "iss": "https://iam.test.example/",
+  "exp": 1746387991,
+  "iat": 1746384391,
+  "jti": "e4234ed7-deb8-48c9-bd39-2d0f59c9f575",
+  "client_id": "6a86717b-5153-4592-a636-2bf021694a58",
+  "wlcg.groups": [
+    "/indigo-dc/webdav",
+    "/Analysis",
+    "/Production",
+    "/indigo-dc",
+    "/indigo-dc/xfers"
+  ]
+}
+```

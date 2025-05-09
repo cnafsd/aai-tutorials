@@ -9,3 +9,10 @@ This repo holds docker-compose files for AAI tutorials, in particular
 * [vomsaa-iam](./vomsaa-iam) allows you to ask for a VOMS proxy with different attributes. Also, you can play with group membership (i.e. add/remove the _test_ user to some group) and check that the change is propagated in the VOMS proxy
 * [vomsaa-iam-webdav](./vomsaa-iam-webdav/) self-contained examples on how to get a token (from the local IAM) or a proxy (from the local VOMS AA) and access a StoRM WebDAV resource
 * [vomsaa-webdav](./vomsaa-webdav/) allows to ask for a token to the local VOMS AA and be authorized to access resources served by the local StoRM WebDAV.
+
+## Requisite
+
+The basic requisites to run the Hands-on is to have docker installed with the compose plugin
+
+- to install docker engin on linux follow [this guide](https://docs.docker.com/engine/install/) (where you can find the list to the various platforms)
+- to install the compose plugin on linux follow [this guide](https://docs.docker.com/compose/install/linux/).

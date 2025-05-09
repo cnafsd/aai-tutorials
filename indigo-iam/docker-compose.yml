@@ -67,9 +67,9 @@ services:
       - ./application-files/application-mysql.yml:/indigo-iam/config/application-mysql.yml:ro
       - ./application-files/application-logs.yml:/indigo-iam/config/application-logs.yml:ro
 
-  client:
+  demo:
     image: ${CLIENT_IMAGE}:${CLIENT_IMAGE_TAG}
-    container_name: client
+    container_name: demo
 
     depends_on:
       trust:
@@ -91,7 +91,7 @@ services:
     depends_on:
       iam-be:
         condition: service_started
-      client:
+      demo:
         condition: service_started
       trust:
         condition: service_completed_successfully
@@ -117,3 +117,24 @@ services:
       default:
         aliases:
           - iam.test.example
+
+  clients:
+    image: ${GRID_CLIENTS_IMAGE}:${GRID_CLIENTS_IMAGE_TAG}
+    environment:
+      TZ: Europe/Rome
+      OIDC_AGENT_ALIAS: test0
+      OIDC_AGENT_SECRET: password
+
+    depends_on:
+      trust:
+        condition: service_completed_successfully
+
+    volumes:
+      - cabundle:/etc/pki
+      - trustanchors:/etc/grid-security/certificates
+      - ./oidc-agent:/home/test/.config/oidc-agent
+
+    entrypoint:  sleep infinity
+
+    networks:
+      default:
