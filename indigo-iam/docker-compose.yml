@@ -118,23 +118,3 @@ services:
         aliases:
           - iam.test.example
 
-  clients:
-    image: ${GRID_CLIENTS_IMAGE}:${GRID_CLIENTS_IMAGE_TAG}
-    environment:
-      TZ: Europe/Rome
-      OIDC_AGENT_ALIAS: test0
-      OIDC_AGENT_SECRET: password
-
-    depends_on:
-      trust:
-        condition: service_completed_successfully
-
-    volumes:
-      - cabundle:/etc/pki
-      - trustanchors:/etc/grid-security/certificates
-      - ./oidc-agent:/home/test/.config/oidc-agent
-
-    entrypoint:  sleep infinity
-
-    networks:
-      default:

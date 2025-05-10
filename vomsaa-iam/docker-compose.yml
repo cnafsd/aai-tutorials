@@ -143,6 +143,8 @@ services:
     image: ${GRID_CLIENTS_IMAGE}:${GRID_CLIENTS_IMAGE_TAG}
     environment:
       TZ: Europe/Rome
+      OIDC_AGENT_ALIAS: test0
+      OIDC_AGENT_SECRET: password
 
     depends_on:
       trust:
@@ -155,6 +157,7 @@ services:
       - certs:/certs
       - ./vomsdir/indigo-dc:/etc/grid-security/vomsdir/indigo-dc
       - ./vomsaa/vomses:/etc/vomses
+      - ./oidc-agent:/home/test/.config/oidc-agent
 
     entrypoint:  sleep infinity
 
