@@ -95,7 +95,7 @@ After a login with IAM, `iam-test-client` shows
 
 This separate container allows to request for tokens from IAM either with `curl` or `oidc-agent`.
 
-An `oidc-agent` client configuration (registered within the local `iam` service) mounted in the `clients` container is provided. The CLIEN_ID and SECRET are saved in the db dump used in this compose.
+An `oidc-agent` client configuration (registered within the local `iam` service) mounted in the `clients` container is provided. The Client Id and secret are saved in the db dump used in this compose.
 
 Enter in the container with
 
@@ -109,6 +109,8 @@ Start the `oidc-agent` service and add the client configuration with
 eval $(oidc-agent-service use)
 oidc-add --pw-env=OIDC_AGENT_SECRET ${OIDC_AGENT_ALIAS}
 ```
+
+the `OIDC_AGENT_ALIAS` and `OIDC_AGENT_SECRET` variables are already defined in the container environment.
 
 Create an access token issued by `iam`, with the default WLCG groups
 

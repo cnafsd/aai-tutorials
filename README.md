@@ -12,7 +12,7 @@ This repo holds docker-compose files for AAI tutorials, in particular
 
 ## Requisite
 
-The basic requisites to run the Hands-on is to have docker installed with the compose plugin
+The basic requisite to run these tutorials is to have docker installed with the compose plugin
 
 - to install docker engin on linux follow [this guide](https://docs.docker.com/engine/install/) (where you can find the list to the various platforms)
 - to install the compose plugin on linux follow [this guide](https://docs.docker.com/compose/install/linux/).
