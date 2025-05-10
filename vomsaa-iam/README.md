@@ -1,6 +1,6 @@
-# Docker compose for VOMS AA and StoRM WevDAV
+# Docker compose for VOMS AA and IAM
 
-This folder allows you to ask for a VOMS proxy with different attributes. Also, you can play with group membership (i.e. add/remove the _test_ user to some group) and check that the change is propagated in the VOMS proxy.
+This folder allows you to ask for a VOMS proxy with different attributes and access tokens. Also, you can play with group membership (i.e. add/remove the _test_ user to some group) and check that the change is propagated in the VOMS proxy/access tokens.
 
 ## Run the compose
 
