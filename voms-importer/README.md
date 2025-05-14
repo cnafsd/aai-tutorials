@@ -47,7 +47,7 @@ _The `skip-duplicate-accounts-checks` option is required in the importer version
 To run the importer directly from docker
 
 ```bash
-docker run --rm -it -e X509_USER_PROXY=/tmp/x509up_u501 -e IAM_ENDPOINT=https://iam-dev.cloud.cnaf.infn.it --env-file oidc-agent.env -v ./oidc-agent:/home/test/.config/oidc-agent -v ~/.globus:/home/test/.globus --entrypoint bash indigoiam/voms-importer:v0.1.15
+docker run --rm -it -e X509_USER_PROXY=/tmp/x509up_u501 -e IAM_ENDPOINT=https://iam-dev.cloud.cnaf.infn.it --env-file oidc-agent.env -v ./oidc-agent:/home/test/.config/oidc-agent -v ~/.globus:/home/test/.globus -v ./:/volume --entrypoint bash indigoiam/voms-importer:v0.1.15
 ```
 
 (it requires you have a local GRID certificate/key pair with proper permissions in the `~/.globus` folder).
